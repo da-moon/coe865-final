@@ -2,52 +2,43 @@ syntax = "proto3";
 package model;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 message Hash {
-    string md5 = 1;
-    string sha256 = 2;
-}
-message Config{
-    RouteController self= 1;
-    repeated RouteController connected_route_controllers= 2;
-    repeated AutonomousSystem connected_autonomous_systems= 3;
-    string cron = 4;
-    int32 port= 5;
+  string md5 = 1;
+  string sha256 = 2;
 }
 message RouteController {
-    int32 id = 1 [(gogoproto.enumvalue_customname) = "ID"];
-    int32 autonomous_system_number = 2;
-    string ip= 3 [(gogoproto.enumvalue_customname) = "IP"];
+  int32 id = 1 [ (gogoproto.customname) = "ID" ];
+  int32 autonomous_system_number = 2;
+  string ip = 3 [ (gogoproto.customname) = "IP" ];
 }
 message AutonomousSystem {
-    int32 number = 1;
-    int32 link_capacity = 2;
-    int32 cost= 3;
+  int32 number = 1;
+  int32 link_capacity = 2;
+  int32 cost = 3;
 }
 message UpdateRequest {
-    string uuid= 1 [(gogoproto.enumvalue_customname) = "UUID"];
-    RouteController source_route_controller= 2;
-    AutonomousSystem destination_autonomous_system= 3;
-    Hash message_digest = 4;
+  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
+  RouteController source_route_controller = 2;
+  AutonomousSystem destination_autonomous_system = 3;
+  //   Hash message_digest = 4;
 }
 message UpdateResponse {
-    string uuid= 1 [(gogoproto.enumvalue_customname) = "UUID"];
-    AutonomousSystem destination_autonomous_system= 2;
-    repeated int32 path= 3;
-    Hash message_digest = 4;
+  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
+  AutonomousSystem destination_autonomous_system = 2;
+  repeated int32 path = 3;
+  //   Hash message_digest = 4;
 }
 message KeyExchangeRequest {
-    string uuid= 1 [(gogoproto.enumvalue_customname) = "UUID"];
-    string nonce= 2;
-    string key= 3;
-    Hash message_digest = 4;
+  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
+  string nonce = 2;
+  string key = 3;
+  //   Hash message_digest = 4;
 }
 message KeyExchangeResponse {
-    string uuid= 1 [(gogoproto.enumvalue_customname) = "UUID"];
-    bool is_ok= 2;
-    Hash message_digest = 3;
+  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
+  bool is_ok = 2;
+  //   Hash message_digest = 3;
 }
 service OverlayNetwork {
-    rpc EstimateCost(UpdateRequest) returns (UpdateResponse){
-    }
-    rpc KeyExchange(KeyExchangeRequest) returns (KeyExchangeResponse){
-    }
+  rpc EstimateCost(UpdateRequest) returns (UpdateResponse) {}
+  rpc KeyExchange(KeyExchangeRequest) returns (KeyExchangeResponse) {}
 }

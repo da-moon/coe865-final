@@ -12,7 +12,7 @@ func main() {
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: shared.HandshakeConfig,
 		Plugins: map[string]plugin.Plugin{
-			"cost_estimator_grpc": &grpc.Plugin{Impl: &handler.EstimateCost{}},
+			"cost_estimator_grpc": &grpc.Plugin{Impl: &handler.OverlayNetwork{}},
 		},
 		// A non-nil value here enables gRPC serving for this plugin...
 		GRPCServer: plugin.DefaultGRPCServer,

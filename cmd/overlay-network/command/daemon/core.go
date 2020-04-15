@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	model "github.com/da-moon/coe865-final/model"
+	"github.com/da-moon/coe865-final/pkg/utils"
 	costEstimatorGrpc "github.com/da-moon/coe865-final/plugins/cost-estimator/grpc"
 	costEstimatorRPC "github.com/da-moon/coe865-final/plugins/cost-estimator/net-rpc"
 	shared "github.com/da-moon/coe865-final/plugins/shared"
@@ -76,9 +77,7 @@ func (a *Core) EstimateCost() func() {
 	return func() {
 		a.lock.Lock()
 		defer a.lock.Unlock()
-		var (
-			res *model.UpdateResponse
-		)
+
 		path := a.conf.CostEstimatorPath
 		if len(path) == 0 {
 			err := stacktrace.NewError("cost estimator plugin engine binary path is empty")
@@ -121,14 +120,37 @@ func (a *Core) EstimateCost() func() {
 		}
 		// We should have a overlay network store now! This feels like a normal interface
 		// implementation but is in fact over an RPC connection.
-		overlay := raw.(shared.OverlayNetworkInterface)
-		res, err = overlay.EstimateCost()
+		overlay, ok := raw.(shared.OverlayNetworkInterface)
+		if !ok {
+			err = stacktrace.NewError("failed to convert remote raw client to OverlayNetworkInterface")
+			a.logger.Printf(fmt.Sprintf(("error : %#v"), err.Error()))
+			return
+
+		}
+		// for dst :=range a.conf.ConnectedRouteControllers {
+		req := &model.UpdateRequest{
+			UUID: utils.UUID(),
+		}
+		req.SourceRouteController = &model.RouteController{
+			ID:                     int32(a.conf.Self.ID),
+			AutonomousSystemNumber: int32(a.conf.Self.AutonomousSystemNumber),
+			IP:                     a.conf.Self.IP,
+		}
+		req.DestinationAutonomousSystem = &model.AutonomousSystem{
+			Number:       int32(a.conf.ConnectedAutonomousSystems[0].Number),
+			LinkCapacity: int32(a.conf.ConnectedAutonomousSystems[0].LinkCapacity),
+			Cost:         int32(a.conf.ConnectedAutonomousSystems[0].Cost),
+		}
+
+		res, err := overlay.EstimateCost(req)
 		if err != nil {
 			err = stacktrace.Propagate(err, "cost estimator failed to EstimateCost given input")
 			a.logger.Printf(fmt.Sprintf(("error : %#v"), err.Error()))
 			return
 		}
 		a.logger.Printf(fmt.Sprintf(("state : %#v"), res))
+		// }
+
 	}
 
 }

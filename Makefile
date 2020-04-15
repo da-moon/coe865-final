@@ -4,9 +4,9 @@ include build/makefiles/pkg/color/color.mk
 include build/makefiles/pkg/functions/functions.mk
 include build/makefiles/target/buildenv/buildenv.mk
 include build/makefiles/target/go/go.mk
-include build/makefiles/target/tests/header/header.mk
-include build/makefiles/target/tests/config/config.mk
-include build/makefiles/target/tests/overlay-network/overlay-network.mk
+# include build/makefiles/target/tests/header/header.mk
+# include build/makefiles/target/tests/config/config.mk
+# include build/makefiles/target/tests/overlay-network/overlay-network.mk
 THIS_FILE := $(firstword $(MAKEFILE_LIST))
 SELF_DIR := $(dir $(THIS_FILE))
 .PHONY: test build clean run kill proto temp-clean

@@ -9,13 +9,21 @@ import (
 	"github.com/palantir/stacktrace"
 )
 
-// EstimateCost - this is the struct that implements engine operations
-type EstimateCost struct{}
+// OverlayNetwork - this is the struct that implements plugin's actual operations
+type OverlayNetwork struct{}
 
-// EstimateCost - Implementation of EstimateCost method for go engine
-func (EstimateCost) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, error) {
+// EstimateCost - Implementation of EstimateCost method for plugin
+func (OverlayNetwork) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, error) {
 	result := &model.UpdateResponse{}
+	result.DestinationAutonomousSystem = new(model.AutonomousSystem)
+	result.DestinationAutonomousSystem.Cost = 123
+	return result, nil
+}
 
+// KeyExchange - Implementation of KeyExchange method for plugin
+func (OverlayNetwork) KeyExchange(req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
+	result := &model.KeyExchangeResponse{}
+	result.IsOk = true
 	return result, nil
 }
 func getAPIListener(addr string) (net.Listener, error) {
