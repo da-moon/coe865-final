@@ -6,16 +6,6 @@ import (
 	"path/filepath"
 )
 
-// MasterKeyFlag ...
-func MasterKeyFlag(f *flag.FlagSet) *string {
-	result := os.Getenv("DARE_MASTER_KEY")
-	if result == "" {
-		result = "b6c4bba7a385aef779965cb0b7d66316ab091704042606797871"
-	}
-	return f.String("master-key", result,
-		"Master Key used in encryption-decryption process.")
-}
-
 // CostEstimatorPathFlag ...
 func CostEstimatorPathFlag(f *flag.FlagSet) *string {
 	result := os.Getenv("OVERLAY_COST_ESTIMATOR_PLUGIN")
@@ -46,4 +36,21 @@ func DevFlag(f *flag.FlagSet) *bool {
 	var result bool
 	return f.Bool("dev", result,
 		"Enable development mode.")
+}
+
+// RPCPortFlag ...
+func RPCPortFlag(f *flag.FlagSet) *int {
+	result := 1450
+	return f.Int("rpc-port", result,
+		"overlay daemon rpc port indicator.")
+}
+
+// CronFlag ...
+func CronFlag(f *flag.FlagSet) *string {
+	// cron job that sets
+	// how often messages are
+	// broadcastes
+	result := "@every 10s"
+	return f.String("cron", result,
+		"controls how often messages are broadcasted.")
 }

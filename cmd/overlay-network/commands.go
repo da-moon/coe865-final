@@ -27,6 +27,11 @@ func init() {
 				Ui: ui,
 			}, nil
 		},
+		"parse-config": func() (cli.Command, error) {
+			return &command.ParseConfigCommand{
+				Ui: ui,
+			}, nil
+		},
 		"version": func() (cli.Command, error) {
 			return &command.VersionCommand{
 				Name:              EntryPointName,

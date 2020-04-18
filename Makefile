@@ -9,8 +9,9 @@ include build/makefiles/target/go/go.mk
 # include build/makefiles/target/tests/overlay-network/overlay-network.mk
 THIS_FILE := $(firstword $(MAKEFILE_LIST))
 SELF_DIR := $(dir $(THIS_FILE))
-.PHONY: test build clean run kill proto temp-clean
-.SILENT: test build clean run kill proto temp-clean
+.PHONY: test build clean run kill proto config temp-clean
+.SILENT: test build clean run kill proto config temp-clean
+CONFIG_DIR:=$(PWD)/fixtures
 PORT_ONE:=8080 
 PORT_TWO:=8081
 PORT_THREE:=8082
@@ -26,6 +27,11 @@ proto:
 run: kill
 	- $(call print_running_target)
 	- bin$(PSEP)overlay-network daemon --api-addr=127.0.0.1:${PORT} > $(PWD)/server.log 2>&1 &
+	- $(call print_completed_target)
+config: 
+	- $(call print_running_target)
+	- $(info $(CONFIG_DIR))
+	- bin$(PSEP)overlay-network parse-config -config-dir=$(CONFIG_DIR)
 	- $(call print_completed_target)
 clean:
 	- $(call print_running_target)

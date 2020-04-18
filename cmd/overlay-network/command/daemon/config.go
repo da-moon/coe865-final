@@ -23,11 +23,11 @@ type Config struct {
 	LogLevel                   string             `json:"log_level" mapstructure:"log_level"`
 	Protocol                   int                `json:"protocol" mapstructure:"protocol"`
 	DevelopmentMode            bool               `json:"development_mode" mapstructure:"development_mode"`
-	Self                       *RouteController   `json:"self" mapstructure:"self"`
 	Cron                       string             `json:"cron" mapstructure:"cron"`
 	Port                       int                `json:"port" mapstructure:"port"`
+	Self                       *RouteController   `json:"self" mapstructure:"self"`
 	ConnectedRouteControllers  []RouteController  `json:"connected_route_controllers" mapstructure:"connected_route_controllers"`
-	ConnectedAutonomousSystems []AutonomousSystem `json:"connected_autonomous_systems" mapstructure:"connected_route_controllers"`
+	ConnectedAutonomousSystems []AutonomousSystem `json:"connected_autonomous_systems" mapstructure:"connected_autonomous_systems"`
 }
 
 // RouteController ...

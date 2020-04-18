@@ -2,9 +2,10 @@ package jsonutil
 
 import (
 	"bytes"
+	"io"
+
 	jsoniter "github.com/json-iterator/go"
 	stacktrace "github.com/palantir/stacktrace"
-	"io"
 )
 
 // EncodeJSONWithoutErr - Encodes/Marshals the given object into JSON but does not return an err
