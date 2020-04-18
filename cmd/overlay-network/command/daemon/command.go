@@ -157,11 +157,10 @@ Usage: overlay-network daemon [options]
 
 Options:
 
-  -api-addr=127.0.0.1:8080 Address to bind the daemon json API listener.
-  -dev                     starts overlay network agent in development mode
-  -config-file=foo         Path to a JSON file to read configuration from.
-                           This can be specified multiple times.
-  -log-level=info          daemon's log level.
+  -rpc-port=8080 	        	Address to bind the daemon json API listener.
+  -dev                     		starts overlay network agent in development mode
+  -config-file=foo         		Path to a JSON file to read configuration from.
+  -log-level=info          		daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
 `
 	return strings.TrimSpace(helpText)

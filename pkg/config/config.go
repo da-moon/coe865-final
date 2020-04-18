@@ -50,9 +50,15 @@ func (c *Config) SaveAsJSON(path string) error {
 	path = path + ".json"
 	// checking to see if target exists
 	// delete if stat was successful (i.e exists ...)
+	// fmt.Println("SaveAsJSON target to stat", path)
 	_, err = os.Stat(path)
 	if err == nil {
-		os.Remove(path)
+		err = os.Remove(path)
+		if err != nil {
+			stacktrace.Propagate(err, "could not remove old json config at %s", path)
+			// fmt.Println("err", err)
+			return err
+		}
 	}
 	sink, err := os.Create(path)
 	if err != nil {
@@ -66,6 +72,13 @@ func (c *Config) SaveAsJSON(path string) error {
 	_, err = io.Copy(sink, buf)
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not copy encoded config data from buffer to '%s' ", path)
+		// cleaning up file that was wrongly created
+		os.Remove(path)
+		return err
+	}
+	err = sink.Sync()
+	if err != nil {
+		err = stacktrace.Propagate(err, "could not flush kernel buffer to disk '%s' ", path)
 		// cleaning up file that was wrongly created
 		os.Remove(path)
 		return err

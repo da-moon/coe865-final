@@ -59,6 +59,7 @@ func (c *ConfigFactory) New(
 
 // MergeFactory ...
 func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
+	// fmt.Println("MergeFactory")
 	result := *a
 	if b.CostEstimatorPath != "" {
 		result.CostEstimatorPath = b.CostEstimatorPath
@@ -68,6 +69,13 @@ func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
 	}
 	if b.Protocol > 0 {
 		result.Protocol = b.Protocol
+	}
+	if b.Port > 0 {
+		// fmt.Println("MergeFactory Port Override", "original", result.Port, "new", b.Port)
+		result.Port = b.Port
+	}
+	if b.Cron != "" {
+		result.Cron = b.Cron
 	}
 	result.DevelopmentMode = b.DevelopmentMode
 

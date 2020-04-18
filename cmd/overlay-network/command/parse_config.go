@@ -47,7 +47,7 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	cmdConfigFactory.CostEstimatorPath = *costEstimatorPath
 	cmdConfigFactory.Cron = *cron
 	factory := config.DefaultConfigFactory()
-	// factory = config.MergeFactory(factory, &cmdConfigFactory)
+	factory = config.MergeFactory(factory, &cmdConfigFactory)
 	if len(configFiles) > 0 {
 		mapping, err := factory.ReadConfigPaths(configFiles, config.CONF)
 		if err != nil {
@@ -80,10 +80,15 @@ Usage: overlay-network parse-config
   converts is into a normal mashalling format such as JSON.
   it stores the converted file with the same name.
 
-    -config-file=foo       Path to a config file you wish to convert.
-                           This can be specified multiple times.
-    -config-dir=foo        Path to a directory to read and convert configurations from.
-                           This can be specified multiple times.
+    -config-file=foo            Path to a config file you wish to convert.
+                                This can be specified multiple times.
+	-config-dir=foo             Path to a directory to read and convert configurations from.
+	                            This can be specified multiple times.
+	-rpc-port=8080 	            Override converted settings files rpc port value.
+    -dev                        Override converted settings files development mode to true
+    -log-level=info             Override converted settings files log level.
+    -cost-estimator-path=foo    Override converted settings files cost estimator plugin Path.
+    -cron='@every 20s'          Override converted settings files message sending interval.
 
   sample config file (before transform) :
 
