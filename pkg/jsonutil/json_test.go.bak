@@ -3,6 +3,7 @@ package jsonutil_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -37,6 +38,7 @@ func TestJSONUtil_DecodeJSON(t *testing.T) {
 
 	err := jsonutil.DecodeJSON([]byte(input), &actual)
 	if err != nil {
+		fmt.Printf("decoding err: %v\n", err)
 	}
 
 	expected := map[string]interface{}{
@@ -55,6 +57,7 @@ func TestJSONUtil_DecodeJSONFromReader(t *testing.T) {
 
 	err := jsonutil.DecodeJSONFromReader(bytes.NewReader([]byte(input)), &actual)
 	if err != nil {
+		fmt.Printf("decoding err: %v\n", err)
 	}
 
 	expected := map[string]interface{}{
@@ -130,6 +133,7 @@ func BenchmarkJSONUtil_DecodeJSONFromReader(b *testing.B) {
 
 		err := jsonutil.DecodeJSONFromReader(bytes.NewReader([]byte(input)), &actual)
 		if err != nil {
+			fmt.Printf("decoding err: %v\n", err)
 		}
 	}
 

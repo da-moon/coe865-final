@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"strconv"
@@ -13,6 +14,7 @@ import (
 // that has the raw text format for config and returns
 // parses it into config struct
 func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
+	fmt.Println("DecodeRawConfig called")
 
 	buf, err := ioutil.ReadAll(r)
 	if err != nil {
@@ -76,6 +78,9 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 			index = index + 1
 		}
 	}
+	fmt.Printf("DecodeRawConfig self %#v\n", self)
+	fmt.Printf("DecodeRawConfig connectedRouteControllers %#v\n", connectedRouteControllers)
+	fmt.Printf("DecodeRawConfig connectedAutonomousSystems %#v\n", connectedAutonomousSystems)
 
 	result := c.New(self, connectedRouteControllers, connectedAutonomousSystems)
 	return result, nil

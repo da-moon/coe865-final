@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -40,13 +41,16 @@ type AutonomousSystem struct {
 
 // SaveAsJSON ...
 func (c *Config) SaveAsJSON(path string) error {
+	fmt.Println("SaveAsJSON called with path :", path)
 	ext := filepath.Ext(filepath.Base(path))
+	fmt.Println("ext", ext)
 	path = strings.TrimSuffix(path, ext)
 	enc, err := jsonutil.EncodeJSONWithIndentation(*c)
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not encode config file '%s' as json", path)
 		return err
 	}
+	fmt.Println("SaveAsJSON Updated Base path :", path)
 	path = path + ".json"
 	// checking to see if target exists
 	// delete if stat was successful (i.e exists ...)
