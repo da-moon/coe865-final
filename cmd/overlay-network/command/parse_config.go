@@ -23,7 +23,7 @@ const entrypoint = "parse-config"
 // Run ...
 func (c *ParseConfigCommand) Run(args []string) int {
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
-	var cmdConfigFactory config.ConfigFactory
+	cmdConfigFactory := config.DefaultConfigFactory()
 
 	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
 	var configFiles []string
@@ -47,7 +47,7 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	cmdConfigFactory.CostEstimatorPath = *costEstimatorPath
 	cmdConfigFactory.Cron = *cron
 	factory := config.DefaultConfigFactory()
-	factory = config.MergeFactory(factory, &cmdConfigFactory)
+	factory = config.MergeFactory(factory, cmdConfigFactory)
 	if len(configFiles) > 0 {
 		mapping, err := factory.ReadConfigPaths(configFiles, config.CONF)
 		if err != nil {

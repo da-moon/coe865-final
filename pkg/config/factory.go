@@ -5,7 +5,8 @@ import (
 	"path/filepath"
 )
 
-const protocol = 1
+// ProtocolVersion ...
+const ProtocolVersion = 1
 
 // ConfigFactory is used to add extra metadata
 // the server needs to a config struct
@@ -29,7 +30,7 @@ func DefaultConfigFactory() *ConfigFactory {
 	result := &ConfigFactory{
 		LogLevel:          "INFO",
 		DevelopmentMode:   false,
-		Protocol:          protocol,
+		Protocol:          ProtocolVersion,
 		CostEstimatorPath: filepath.Join(path, "cost-estimator"),
 		Cron:              "@every 10s",
 		Port:              1450,

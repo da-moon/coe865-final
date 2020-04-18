@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	model "github.com/da-moon/coe865-final/model"
+	"github.com/da-moon/coe865-final/pkg/config"
 	"github.com/da-moon/coe865-final/pkg/utils"
 	costEstimatorGrpc "github.com/da-moon/coe865-final/plugins/cost-estimator/grpc"
 	costEstimatorRPC "github.com/da-moon/coe865-final/plugins/cost-estimator/net-rpc"
@@ -20,7 +21,7 @@ import (
 
 // Core ...
 type Core struct {
-	conf         *Config
+	conf         *config.Config
 	lock         *sync.Mutex
 	logger       *log.Logger
 	shutdown     bool
@@ -30,7 +31,7 @@ type Core struct {
 }
 
 // Create ...
-func Create(conf *Config, logOutput io.Writer) (*Core, error) {
+func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 
 	if logOutput == nil {
 		logOutput = os.Stderr

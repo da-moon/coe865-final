@@ -29,13 +29,25 @@ func (c *ConfigFactory) ReadConfigPaths(paths []string, extension ConfigExtensio
 		}
 
 		if !fi.IsDir() {
-			config, err := c.DecodeRawConfig(f)
-			f.Close()
-			if err != nil {
-				err = stacktrace.Propagate(err, "could not decode file at '%s'", path)
-				return nil, err
+
+			if filepath.Ext(fi.Name()) == "."+JSON.String() {
+				config, err := DecodeJSONConfig(f)
+				if err != nil {
+					f.Close()
+					err = stacktrace.Propagate(err, "could not decode file at '%s'", path)
+					return nil, err
+				}
+				result[path] = *config
 			}
-			result[path] = *config
+			if filepath.Ext(fi.Name()) == "."+CONF.String() {
+				config, err := c.DecodeRawConfig(f)
+				if err != nil {
+					f.Close()
+					err = stacktrace.Propagate(err, "could not decode file at '%s'", path)
+					return nil, err
+				}
+				result[path] = *config
+			}
 			continue
 		}
 

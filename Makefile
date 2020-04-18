@@ -26,14 +26,14 @@ proto:
 	- $(call print_completed_target)
 run: kill
 	- $(call print_running_target)
-	- bin$(PSEP)overlay-network daemon --api-addr=127.0.0.1:${PORT} > $(PWD)/server.log 2>&1 &
+	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_ONE} > $(PWD)/logs/rc1.log 2>&1 &
 	- $(call print_completed_target)
 config: 
 	- $(call print_running_target)
 	- $(info $(CONFIG_DIR))
 	- bin$(PSEP)overlay-network parse-config -config-dir=$(CONFIG_DIR)
 	- $(call print_completed_target)
-clean:
+clean: 
 	- $(call print_running_target)
 	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-clean
 	- $(call print_completed_target)

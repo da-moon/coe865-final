@@ -20,6 +20,14 @@ func CostEstimatorPathFlag(f *flag.FlagSet) *string {
 		"cost estimator plugin path.")
 }
 
+// ConfigFilePathFlag ...
+func ConfigFilePathFlag(f *flag.FlagSet) *string {
+	result := os.Getenv("OVERLAY_CONFIG_FILE")
+
+	return f.String("config-file", result,
+		"json config file path.")
+}
+
 // LogLevelFlag ...
 func LogLevelFlag(f *flag.FlagSet) *string {
 	result := os.Getenv("OVERLAY_LOG_LEVEL")
