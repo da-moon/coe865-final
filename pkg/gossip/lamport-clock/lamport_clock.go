@@ -9,26 +9,23 @@ type LamportClock struct {
 	counter uint64
 }
 
-// LamportTime ...
-type LamportTime uint64
-
 // Time is used to return the current value of the lamport clock
-func (l *LamportClock) Time() LamportTime {
-	return LamportTime(atomic.LoadUint64(&l.counter))
+func (l *LamportClock) Time() uint64 {
+	return atomic.LoadUint64(&l.counter)
 }
 
 // Increment is used to increment and return the value of the lamport clock
-func (l *LamportClock) Increment() LamportTime {
-	return LamportTime(atomic.AddUint64(&l.counter, 1))
+func (l *LamportClock) Increment() uint64 {
+	return atomic.AddUint64(&l.counter, 1)
 }
 
 // Witness is called to update our local clock if necessary after
 // witnessing a clock value received from another process
-func (l *LamportClock) Witness(v LamportTime) {
+func (l *LamportClock) Witness(v uint64) {
 WITNESS:
 	// If the other value is old, we do not need to do anything
 	cur := atomic.LoadUint64(&l.counter)
-	other := uint64(v)
+	other := v
 	if other < cur {
 		return
 	}

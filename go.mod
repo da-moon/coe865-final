@@ -16,7 +16,7 @@ require (
 	github.com/palantir/stacktrace v0.0.0-20161112013806-78658fd2d177
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.5.0
-	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/stretchr/testify v1.5.1
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	google.golang.org/grpc v1.28.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
