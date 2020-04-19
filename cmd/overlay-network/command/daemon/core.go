@@ -50,6 +50,7 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 
 // Start ...
 func (a *Core) Start() error {
+
 	// @TODO check errors
 	a.logger.Printf("overlay network daemon core started!")
 	a.cron.AddFunc(a.conf.Cron, a.EstimateCost())
@@ -59,6 +60,7 @@ func (a *Core) Start() error {
 
 // Shutdown ...
 func (a *Core) Shutdown() error {
+
 	a.shutdownLock.Lock()
 	defer a.shutdownLock.Unlock()
 	a.cron.Stop()
@@ -76,6 +78,7 @@ func (a *Core) ShutdownCh() <-chan struct{} {
 
 // EstimateCost ...
 func (a *Core) EstimateCost() func() {
+
 	return func() {
 		a.lock.Lock()
 		defer a.lock.Unlock()

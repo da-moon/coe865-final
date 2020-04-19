@@ -29,6 +29,7 @@ func NewLogWriter(buf int) *LogWriter {
 
 // RegisterHandler ...
 func (l *LogWriter) RegisterHandler(lh LogHandler) {
+
 	l.Lock()
 	defer l.Unlock()
 	if _, ok := l.handlers[lh]; ok {
@@ -47,14 +48,15 @@ func (l *LogWriter) RegisterHandler(lh LogHandler) {
 
 // DeregisterHandler ...
 func (l *LogWriter) DeregisterHandler(lh LogHandler) {
+
 	l.Lock()
 	defer l.Unlock()
 	delete(l.handlers, lh)
-
 }
 
 // Write ...
 func (l *LogWriter) Write(p []byte) (n int, err error) {
+
 	l.Lock()
 	defer l.Unlock()
 	n = len(p)

@@ -9,8 +9,8 @@ include build/makefiles/target/go/go.mk
 # include build/makefiles/target/tests/overlay-network/overlay-network.mk
 THIS_FILE := $(firstword $(MAKEFILE_LIST))
 SELF_DIR := $(dir $(THIS_FILE))
-.PHONY: test build clean run kill proto config  clean-bac 
-.SILENT: test build clean run kill proto config  clean-bac
+.PHONY: test build clean run kill proto config  
+.SILENT: test build clean run kill proto config 
 CONFIG_DIR:=$(PWD)/fixtures
 PORT_ONE:=8080 
 PORT_TWO:=8081
@@ -41,8 +41,4 @@ kill : go-clean
 	- $(call print_running_target)
 	- $(RM) $(PWD)/server.log
 	- for pid in $(shell ps  | grep "overlay-network" | awk '{print $$1}'); do kill -9 "$$pid"; done
-	- $(call print_completed_target)
-clean-bac: 
-	- $(call print_running_target)
-	- find . -type f -a -name *.bac -exec rm {} \;
 	- $(call print_completed_target)

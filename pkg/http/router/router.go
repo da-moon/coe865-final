@@ -50,6 +50,7 @@ type Route struct {
 
 // GenerateRoutes ...
 func GenerateRoutes(routes []Route) *mux.Router {
+
 	router := mux.NewRouter().PathPrefix("/").Subrouter()
 	// router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {

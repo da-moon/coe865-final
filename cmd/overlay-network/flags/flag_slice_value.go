@@ -19,6 +19,7 @@ func (s *AppendSliceValue) String() string {
 
 // Set ...
 func (s *AppendSliceValue) Set(value string) error {
+
 	if *s == nil {
 		*s = make([]string, 0, 1)
 	}

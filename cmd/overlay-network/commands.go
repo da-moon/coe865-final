@@ -47,8 +47,8 @@ func init() {
 // makeShutdownCh returns a channel that can be used for shutdown
 // notifications for commands. This channel will send a message for every
 // interrupt received.
-
 func makeShutdownCh() <-chan struct{} {
+
 	resultCh := make(chan struct{})
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt)

@@ -40,6 +40,7 @@ func DefaultConfigFactory() *ConfigFactory {
 
 // New returns a new config struct
 func (c *ConfigFactory) New(self *RouteController, connectedRouteControllers []RouteController, connectedAutonomousSystems []AutonomousSystem) *Config {
+
 	result := &Config{
 		Self:                       self,
 		ConnectedRouteControllers:  connectedRouteControllers,
@@ -56,6 +57,7 @@ func (c *ConfigFactory) New(self *RouteController, connectedRouteControllers []R
 
 // MergeFactory ...
 func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
+
 	// fmt.Println("MergeFactory")
 	result := *a
 	if b.CostEstimatorPath != "" {

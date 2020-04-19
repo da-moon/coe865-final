@@ -52,13 +52,13 @@ endif
 	- $(call print_running_env_exit)
 endif
 
-.PHONY: all shell 
-.SILENT: all shell 
+.PHONY: all shell clean-bac 
+.SILENT: all shell clean-bac 
 
 # https://renenyffenegger.ch/notes/development/make/functions/foreach
 # https://unix.stackexchange.com/questions/33629/how-can-i-populate-a-file-with-random-data
 # https://stackoverflow.com/questions/26554186/with-gnu-make-how-can-i-combine-multiple-files-into-one/26554251
-
-
-
-
+clean-bac: 
+	- $(call print_running_target)
+	- find . -type f -a -name *.bac -exec rm {} \;
+	- $(call print_completed_target)

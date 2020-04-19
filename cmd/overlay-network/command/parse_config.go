@@ -67,11 +67,13 @@ func (c *ParseConfigCommand) Run(args []string) int {
 
 // Synopsis ...
 func (c *ParseConfigCommand) Synopsis() string {
+
 	return "transform a given config file to sane format"
 }
 
 // Help ...
 func (c *ParseConfigCommand) Help() string {
+
 	helpText := `
 Usage: overlay-network parse-config
   reads a config file as defined in project specification and

@@ -26,6 +26,7 @@ func (p *Plugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *g
 
 // GRPCServer ...
 func (p *Plugin) GRPCServer(broker *plugin.GRPCBroker, s *grpcx.Server) error {
+
 	model.RegisterOverlayNetworkServer(s, &Server{Impl: p.Impl})
 	return nil
 }

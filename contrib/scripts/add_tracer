@@ -15,7 +15,7 @@ function add_tracer() {
         for line in "${targets[@]}";do \
             number=$(echo "$line"|cut -d: -f1) ; \
             signature=$(echo "$line"|cut -d: -f2) ; \
-            to_add="fmt.Println(\"[CALL-STACK] [$number] [$counter] [$file] : $signature \")"; \
+            to_add="fmt.Println(\"[CALL-STACK] [file] $file [method] $signature \")"; \
             sed -i.bac "$(( number + counter )) i $to_add" "$file" ; \
             ((counter++)) ; \
             unset number; unset signature;unset to_add;

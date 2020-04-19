@@ -23,6 +23,7 @@ func (c *Client) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, 
 
 // KeyExchange ...
 func (c *Client) KeyExchange(req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
+
 	var _resp model.KeyExchangeResponse
 	err := c.client.Call("Plugin.KeyExchange", req, &_resp)
 	if err != nil {

@@ -25,6 +25,7 @@ func (s *Server) EstimateCost(ctx context.Context, _req *model.UpdateRequest) (*
 
 // KeyExchange ...
 func (s *Server) KeyExchange(ctx context.Context, _req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
+
 	resp, err := s.Impl.KeyExchange(_req)
 	if err != nil {
 		err = stacktrace.Propagate(err, "KeyExchange call failed with request %#v", _req)

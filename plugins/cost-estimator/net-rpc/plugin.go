@@ -23,5 +23,6 @@ func (p *Plugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error)
 
 // Server ...
 func (p *Plugin) Server(*plugin.MuxBroker) (interface{}, error) {
+
 	return &Server{Impl: p.Impl}, nil
 }

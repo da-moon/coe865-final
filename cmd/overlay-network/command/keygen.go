@@ -37,11 +37,13 @@ func (c *KeygenCommand) Run(_ []string) int {
 
 // Synopsis ...
 func (c *KeygenCommand) Synopsis() string {
+
 	return "Generates a new encryption key"
 }
 
 // Help ...
 func (c *KeygenCommand) Help() string {
+
 	helpText := `
 Usage: overlay-network keygen
   Generates a new 32 byte long encryption key that can be used to for

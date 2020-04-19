@@ -78,6 +78,7 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 
 // ExtractRouteControllerFromLine ...
 func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
+
 	result := &RouteController{}
 	parts := SanitizeAndSplitLine(input)
 	// fmt.Println("parts", parts, len(parts))
@@ -103,6 +104,7 @@ func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
 
 // ExtractAutonomousSystemFromLine ...
 func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
+
 	result := &AutonomousSystem{}
 	parts := SanitizeAndSplitLine(input)
 	if len(parts) != 3 {
@@ -128,17 +130,17 @@ func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
 	result.LinkCapacity = linkCapacity
 	result.Cost = cost
 	return result, nil
-
 }
 
 // SanitizeAndSplitLine ...
 func SanitizeAndSplitLine(input string) []string {
-	input = strings.TrimSpace(trimComment(input))
 
+	input = strings.TrimSpace(trimComment(input))
 	parts := strings.Split(input, " ")
 	return parts
 }
 func trimComment(s string) string {
+
 	result := s
 	idx := strings.Index(s, ";")
 	if idx != -1 {

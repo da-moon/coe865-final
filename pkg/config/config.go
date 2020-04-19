@@ -103,6 +103,7 @@ const (
 
 // String ...
 func (e ConfigExtension) String() string {
+
 	switch e {
 	case JSON:
 		return "json"

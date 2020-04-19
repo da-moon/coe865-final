@@ -68,8 +68,8 @@ func (c *Command) Run(args []string) int {
 		core,
 	)
 }
-
 func (c *Command) handleSignals(config *config.Config, core *Core) int {
+
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 WAIT:
@@ -113,9 +113,9 @@ WAIT:
 	case <-gracefulCh:
 		return 0
 	}
-
 }
 func (c *Command) handleReload(config *config.Config, core *Core) *config.Config {
+
 	c.Ui.Output("Reloading configuration...")
 	newConf := c.readConfig()
 	if newConf == nil {
@@ -132,18 +132,18 @@ func (c *Command) handleReload(config *config.Config, core *Core) *config.Config
 		newConf.LogLevel = config.LogLevel
 	}
 	return newConf
-
 }
 
 // Synopsis ...
 func (c *Command) Synopsis() string {
-	return "custom overlay network"
 
+	return "custom overlay network"
 }
 
 // Help ...
 // @TODO update
 func (c *Command) Help() string {
+
 	helpText := `
 Usage: overlay-network daemon [options]
   Starts our custom overlay network daemon. it is a long running process
@@ -154,24 +154,23 @@ Options:
   -config-file=foo.json         Path to a JSON file to read configuration from.
   -log-level=info               daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
-
-
   -cron='@every 10s'            message sending interval, in cron format.
 `
 	return strings.TrimSpace(helpText)
 }
 func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
+
 	// coreConfig.Protocol = uint8(config.Protocol)
 	c.Ui.Output("Creating overlay network daemon core...")
 	core, err := Create(config, logOutput)
 	if err != nil {
-
 		c.Ui.Error(fmt.Sprintf("[ERROR] Failed to create the overlay network daemon core: %v", err))
 		return nil
 	}
 	return core
 }
 func (c *Command) setupLoggers(config *config.Config) (*view.GatedWriter, *view.LogWriter, io.Writer) {
+
 	logGate := &view.GatedWriter{
 		Writer: &cli.UiWriter{Ui: c.Ui},
 	}

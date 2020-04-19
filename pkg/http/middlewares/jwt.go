@@ -48,8 +48,8 @@ func JWT(secret string) func(next http.HandlerFunc) http.HandlerFunc {
 }
 
 // parse - parses and validates a token using the HMAC signing method
-
 func parse(secret, tokenString string) (jwt.MapClaims, error) {
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])

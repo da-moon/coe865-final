@@ -54,10 +54,12 @@ func Print(program string) string {
 
 // Info ...
 func Info() string {
+
 	return fmt.Sprintf("(version=%s, branch=%s, revision=%s)", Version, Branch, Revision)
 }
 
 // BuildContext ...
 func BuildContext() string {
+
 	return fmt.Sprintf("(go=%s, user=%s, date=%s)", GoVersion, BuildUser, BuildDate)
 }
