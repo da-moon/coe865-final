@@ -160,7 +160,6 @@ $(GO_BUILD_OS_TARGETS):
 	- $(call print_completed_target)
 	
 
-
 go-clean:
 	- $(CLEAR)
 	- $(call print_running_target)
@@ -168,5 +167,40 @@ go-clean:
 	- @$(MAKE) --no-print-directory -f $(THIS_FILE) shell docker_image="${GO_IMAGE}" container_name="go_builder_container" mount_point="/go/src/${GO_PKG}" cmd="rm -rf /go/src/${GO_PKG}/bin/"
     else
 	- $(RM) ./bin/
+	- $(RM) /tmp/go-build*
     endif
+	- $(call print_completed_target)
+
+.PHONY:extract-signatures gather-info add-tracer remove-tracer
+.SILENT:extract-signatures gather-info add-tracer remove-tracer
+extract-signatures: 
+	- $(call print_running_target)
+	- $(MKDIR) metaprogramming && \
+	$(RM) metaprogramming/functions.sig && \
+	find . -type f \
+	-a -name *.go \
+	-a -not -name *_test.go \
+	-a -not -name *.pb.go \
+	-exec grep -oP '(?<=func ).*?(?= \{)' {} >> metaprogramming/functions.sig \;
+	- $(call print_completed_target)
+
+gather-info: 
+	- $(call print_running_target)
+	- chmod +x "$(PWD)/contrib/scripts/generate_functions_synopsis"
+	- /bin/bash -c "$(PWD)/contrib/scripts/generate_functions_synopsis $(PWD) $(PWD)/metaprogramming/functions.md"
+	- $(call print_completed_target)
+
+add-tracer: 
+	- $(call print_running_target)
+	- chmod +x "$(PWD)/contrib/scripts/add_tracer"
+	- /bin/bash -c "$(PWD)/contrib/scripts/add_tracer $(PWD)"
+	- $(call print_completed_target)
+
+remove-tracer: 
+	- $(call print_running_target)
+	- find . -type f \
+	-a -name *.go \
+	-a -not -name *_test.go \
+	-a -not -name *.pb.go \
+	-exec sed -i 's/.*\[CALL-STACK\].*//g' {} \; -exec goimports -w {} \;  
 	- $(call print_completed_target)

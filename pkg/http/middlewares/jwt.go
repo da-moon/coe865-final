@@ -20,7 +20,9 @@ const ContextJWTKey ContextKey = "jwt"
 // in its argument, you must pass in the secret used when signing
 // the returned value is your middleware
 func JWT(secret string) func(next http.HandlerFunc) http.HandlerFunc {
+
 	return func(next http.HandlerFunc) http.HandlerFunc {
+
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Get authentication header
 			authHeader := r.Header.Get("Authorization")
@@ -51,7 +53,9 @@ func JWT(secret string) func(next http.HandlerFunc) http.HandlerFunc {
 }
 
 // parse - parses and validates a token using the HMAC signing method
+
 func parse(secret, tokenString string) (jwt.MapClaims, error) {
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])

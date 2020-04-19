@@ -23,7 +23,9 @@ type ConfigFactory struct {
 // DefaultConfigFactory
 // returns a config factory with default values
 func DefaultConfigFactory() *ConfigFactory {
+
 	path, err := os.Getwd()
+
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +61,9 @@ func (c *ConfigFactory) New(
 }
 
 // MergeFactory ...
+
 func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
+
 	// fmt.Println("MergeFactory")
 	result := *a
 	if b.CostEstimatorPath != "" {

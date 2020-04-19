@@ -9,6 +9,8 @@ import (
 // gorila mux example
 // router.Methods("OPTIONS").HandlerFunc(middlewares.Cors(Preflight))
 func Preflight(w http.ResponseWriter, r *http.Request) {
+
 	w.WriteHeader(http.StatusOK)
+
 	return
 }

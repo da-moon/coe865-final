@@ -8,7 +8,9 @@ import (
 
 // UUID generates a random UUID according to RFC 4122
 func UUID() string {
+
 	uuid := make([]byte, 16)
+
 	n, err := io.ReadFull(cryrand.Reader, uuid)
 	if n != len(uuid) || err != nil {
 		return ""

@@ -15,6 +15,7 @@ var Commands map[string]cli.CommandFactory
 func init() {
 
 	ui := &cli.BasicUi{Writer: os.Stdout}
+
 	Commands = map[string]cli.CommandFactory{
 		"daemon": func() (cli.Command, error) {
 			return &daemon.Command{
@@ -47,9 +48,10 @@ func init() {
 // makeShutdownCh returns a channel that can be used for shutdown
 // notifications for commands. This channel will send a message for every
 // interrupt received.
-func makeShutdownCh() <-chan struct{} {
-	resultCh := make(chan struct{})
 
+func makeShutdownCh() <-chan struct{} {
+
+	resultCh := make(chan struct{})
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt)
 	go func() {

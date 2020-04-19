@@ -34,7 +34,9 @@ var versionInfoTmpl = `
 
 // Print returns version information.
 func Print(program string) string {
+
 	m := map[string]string{
+
 		"program":   program,
 		"version":   Version,
 		"revision":  Revision,
@@ -53,11 +55,14 @@ func Print(program string) string {
 }
 
 // Info returns version, branch and revision information.
+
 func Info() string {
+
 	return fmt.Sprintf("(version=%s, branch=%s, revision=%s)", Version, Branch, Revision)
 }
 
-// BuildContext returns goVersion, buildUser and buildDate information.
+// BuildContext ...
 func BuildContext() string {
+
 	return fmt.Sprintf("(go=%s, user=%s, date=%s)", GoVersion, BuildUser, BuildDate)
 }

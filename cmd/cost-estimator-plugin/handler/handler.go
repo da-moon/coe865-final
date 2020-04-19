@@ -14,19 +14,25 @@ type OverlayNetwork struct{}
 
 // EstimateCost - Implementation of EstimateCost method for plugin
 func (OverlayNetwork) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, error) {
+
 	result := &model.UpdateResponse{}
+
 	result.DestinationAutonomousSystem = new(model.AutonomousSystem)
 	result.DestinationAutonomousSystem.Cost = 123
 	return result, nil
 }
 
 // KeyExchange - Implementation of KeyExchange method for plugin
+
 func (OverlayNetwork) KeyExchange(req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
+
 	result := &model.KeyExchangeResponse{}
 	result.IsOk = true
 	return result, nil
 }
+
 func getAPIListener(addr string) (net.Listener, error) {
+
 	x, _ := tcpAddressFromString(addr)
 	l, err := net.Listen("tcp", x.String())
 	if err != nil {
@@ -39,10 +45,12 @@ func getAPIListener(addr string) (net.Listener, error) {
 }
 
 // tcpAddress -
+
 func tcpAddress(ip string, port int) *net.TCPAddr {
 	result := &net.TCPAddr{IP: net.ParseIP(ip), Port: port}
 
 	return result
+
 }
 
 // tcpAddressFromString -

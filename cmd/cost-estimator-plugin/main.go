@@ -9,7 +9,9 @@ import (
 
 // ServeConfig - This is the plugin config thet is used in main function of engine
 func main() {
+
 	plugin.Serve(&plugin.ServeConfig{
+
 		HandshakeConfig: shared.HandshakeConfig,
 		Plugins: map[string]plugin.Plugin{
 			"cost_estimator_grpc": &grpc.Plugin{Impl: &handler.OverlayNetwork{}},

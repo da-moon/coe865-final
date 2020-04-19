@@ -12,7 +12,9 @@ type Client struct{ client *rpc.Client }
 
 // EstimateCost ...
 func (c *Client) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, error) {
+
 	var _resp model.UpdateResponse
+
 	err := c.client.Call("Plugin.EstimateCost", req, &_resp)
 	if err != nil {
 		err = stacktrace.Propagate(err, "EstimateCost call failed with request %#v", req)
@@ -21,7 +23,9 @@ func (c *Client) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, 
 }
 
 // KeyExchange ...
+
 func (c *Client) KeyExchange(req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
+
 	var _resp model.KeyExchangeResponse
 	err := c.client.Call("Plugin.KeyExchange", req, &_resp)
 	if err != nil {

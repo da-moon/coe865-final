@@ -19,7 +19,9 @@ type JSON2 struct {
 
 // GenerateRPC2Routes ...
 func GenerateRPC2Routes(routes []JSON2) *mux.Router {
+
 	router := mux.NewRouter().PathPrefix("/").Subrouter()
+
 	// router.
 	// 	Methods(http.MethodOptions).
 	// 	HandlerFunc(middlewares.Cors(handlers.Preflight))
@@ -49,6 +51,7 @@ type Route struct {
 }
 
 // GenerateRoutes - Return a new Gorilla Mux Wrapper
+
 func GenerateRoutes(routes []Route) *mux.Router {
 
 	router := mux.NewRouter().PathPrefix("/").Subrouter()

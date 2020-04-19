@@ -9,8 +9,8 @@ include build/makefiles/target/go/go.mk
 # include build/makefiles/target/tests/overlay-network/overlay-network.mk
 THIS_FILE := $(firstword $(MAKEFILE_LIST))
 SELF_DIR := $(dir $(THIS_FILE))
-.PHONY: test build clean run kill proto config temp-clean extract-signatures gather-info
-.SILENT: test build clean run kill proto config temp-clean extract-signatures gather-info
+.PHONY: test build clean run kill proto config  clean-bac 
+.SILENT: test build clean run kill proto config  clean-bac
 CONFIG_DIR:=$(PWD)/fixtures
 PORT_ONE:=8080 
 PORT_TWO:=8081
@@ -28,23 +28,6 @@ run: kill
 	- $(call print_running_target)
 	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_ONE} > $(PWD)/logs/rc1.log 2>&1 &
 	- $(call print_completed_target)
-extract-signatures: 
-	- $(call print_running_target)
-	- $(MKDIR) metaprogramming && \
-	$(RM) metaprogramming/functions.sig && \
-	find . -type f \
-	-a -name *.go \
-	-a -not -name *_test.go \
-	-a -not -name *.pb.go \
-	-exec grep -oP '(?<=func ).*?(?= \{)' {} >> metaprogramming/functions.sig \;
-	- $(call print_completed_target)
-
-gather-info: 
-	- $(call print_running_target)
-	- chmod +x "$(PWD)/contrib/scripts/generate_functions_synopsis"
-	- /bin/bash -c "$(PWD)/contrib/scripts/generate_functions_synopsis $(PWD) $(PWD)/metaprogramming/functions.md"
-	- $(call print_completed_target)
-
 config: 
 	- $(call print_running_target)
 	- $(info $(CONFIG_DIR))
@@ -54,12 +37,12 @@ clean:
 	- $(call print_running_target)
 	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-clean
 	- $(call print_completed_target)
-kill : temp-clean
+kill : go-clean
 	- $(call print_running_target)
 	- $(RM) $(PWD)/server.log
 	- for pid in $(shell ps  | grep "overlay-network" | awk '{print $$1}'); do kill -9 "$$pid"; done
 	- $(call print_completed_target)
-temp-clean:
+clean-bac: 
 	- $(call print_running_target)
-	- $(RM) /tmp/go-build*
+	- find . -type f -a -name *.bac -exec rm {} \;
 	- $(call print_completed_target)

@@ -10,12 +10,16 @@ import (
 
 // EncodeJSONWithoutErr - Encodes/Marshals the given object into JSON but does not return an err
 func EncodeJSONWithoutErr(in interface{}) []byte {
+
 	res, _ := EncodeJSON(in)
+
 	return res
 }
 
 // EncodeJSON - Encodes/Marshals the given object into JSON
+
 func EncodeJSON(in interface{}) ([]byte, error) {
+
 	if in == nil {
 		return nil, stacktrace.NewError("input for encoding is nil")
 	}
@@ -28,8 +32,9 @@ func EncodeJSON(in interface{}) ([]byte, error) {
 	return stream.Buffer(), nil
 }
 
-// DecodeJSON -
+// DecodeJSON ...
 func DecodeJSON(data []byte, out interface{}) error {
+
 	if len(data) == 0 {
 		return stacktrace.NewError("'data' being decoded is nil")
 	}
@@ -45,8 +50,8 @@ func DecodeJSON(data []byte, out interface{}) error {
 	return nil
 }
 
-// EncodeJSONWithIndentation - Encodes/Marshals the given object into JSON
 // DEPRACATED
+
 func EncodeJSONWithIndentation(in interface{}) ([]byte, error) {
 	// if in == nil {
 	// 	return nil, stacktrace.NewError("input for encoding is nil")
@@ -57,6 +62,7 @@ func EncodeJSONWithIndentation(in interface{}) ([]byte, error) {
 }
 
 // EncodeJSONToWriter - encodes/marshals a given interface
+
 // to an io writer. it can also indent the output
 func EncodeJSONToWriter(w io.Writer, in interface{}, prefix, indent string) error {
 	if w == nil {
@@ -68,6 +74,7 @@ func EncodeJSONToWriter(w io.Writer, in interface{}, prefix, indent string) erro
 		enc.SetIndent(prefix, indent)
 	}
 	return enc.Encode(in)
+
 }
 
 // DecodeJSONFromReader - Decodes/Unmarshals the given

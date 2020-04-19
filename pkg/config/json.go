@@ -9,7 +9,9 @@ import (
 
 // DecodeJSONConfig ...
 func DecodeJSONConfig(r io.Reader) (*Config, error) {
+
 	var raw interface{}
+
 	dec := json.NewDecoder(r)
 	if err := dec.Decode(&raw); err != nil {
 		return nil, err

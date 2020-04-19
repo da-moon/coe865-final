@@ -15,6 +15,7 @@ import (
 func (c *Command) readConfig() *config.Config {
 
 	const entrypoint = "daemon"
+
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
 	cmdConfigFactory := config.DefaultConfigFactory()
 

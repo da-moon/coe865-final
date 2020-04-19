@@ -16,7 +16,9 @@ type Error struct {
 // LogErrorResponse - logs an errornous server server at level debug
 // on standard logger
 func LogErrorResponse(r *http.Request, err error, code int, message string) {
+
 	logrus.WithFields(logrus.Fields{
+
 		"host":       r.Host,
 		"address":    r.RemoteAddr,
 		"method":     r.Method,

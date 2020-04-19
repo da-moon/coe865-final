@@ -10,7 +10,9 @@ import (
 // WriteErrorJSON - logs and sends a json response to the client
 // showing the error message
 func WriteErrorJSON(w *http.ResponseWriter, r *http.Request, code int, message string) {
+
 	// LogErrorResponse(r, err, code, message)
+
 	response, err := jsonutil.EncodeJSON(Error{
 		Error:   true,
 		Code:    code,
@@ -30,7 +32,9 @@ func WriteErrorJSON(w *http.ResponseWriter, r *http.Request, code int, message s
 }
 
 // WriteSuccessfulJSON - logs and sends a new json response to the client
+
 func WriteSuccessfulJSON(w *http.ResponseWriter, r *http.Request, data interface{}) {
+
 	LogSuccessfulResponse(r, data)
 	(*w).Header().Set("Content-Type", "application/json; charset=UTF-8")
 	(*w).WriteHeader(http.StatusOK)

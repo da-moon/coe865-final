@@ -33,7 +33,9 @@ var _ cli.Command = &Command{}
 
 // Run ...
 func (c *Command) Run(args []string) int {
+
 	c.Ui = &cli.PrefixedUi{
+
 		OutputPrefix: "==> ",
 		InfoPrefix:   "    ",
 		ErrorPrefix:  "==> ",
@@ -70,6 +72,7 @@ func (c *Command) Run(args []string) int {
 }
 
 func (c *Command) handleSignals(config *config.Config, core *Core) int {
+
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 
@@ -122,6 +125,7 @@ WAIT:
 }
 
 func (c *Command) handleReload(config *config.Config, core *Core) *config.Config {
+
 	c.Ui.Output("Reloading configuration...")
 	newConf := c.readConfig()
 	if newConf == nil {
@@ -144,11 +148,13 @@ func (c *Command) handleReload(config *config.Config, core *Core) *config.Config
 }
 
 // Synopsis ...
+
 func (c *Command) Synopsis() string {
 	return "custom overlay network"
 }
 
 // Help ...
+
 // @TODO update
 func (c *Command) Help() string {
 	helpText := `
@@ -165,7 +171,10 @@ Options:
   -log-level=info               daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
   -cron='@every 10s'            message sending interval, in cron format.
+
+
 `
+
 	return strings.TrimSpace(helpText)
 }
 func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
@@ -174,7 +183,9 @@ func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
 	core, err := Create(config, logOutput)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("[ERROR] Failed to create the overlay network daemon core: %v", err))
+
 		return nil
+
 	}
 	return core
 }

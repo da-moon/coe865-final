@@ -17,10 +17,14 @@ type Plugin struct {
 
 // GRPCClient - Required method to implement Plugin interface
 func (p *Plugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
+
 	return &Client{client: c}, nil
+
 }
 
 // Server - Required method to implement Plugin interface
+
 func (p *Plugin) Server(*plugin.MuxBroker) (interface{}, error) {
+
 	return &Server{Impl: p.Impl}, nil
 }
