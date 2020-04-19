@@ -17,17 +17,14 @@ type Server struct {
 func (s *Server) EstimateCost(ctx context.Context, _req *model.UpdateRequest) (*model.UpdateResponse, error) {
 
 	resp, err := s.Impl.EstimateCost(_req)
-
 	if err != nil {
 		err = stacktrace.Propagate(err, "EstimateCost call failed with request %#v", _req)
 	}
 	return resp, nil
 }
 
-// EstimateCost ...
-
+// KeyExchange ...
 func (s *Server) KeyExchange(ctx context.Context, _req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
-
 	resp, err := s.Impl.KeyExchange(_req)
 	if err != nil {
 		err = stacktrace.Propagate(err, "KeyExchange call failed with request %#v", _req)

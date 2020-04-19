@@ -18,17 +18,14 @@ type Plugin struct {
 	Impl shared.OverlayNetworkInterface
 }
 
-// GRPCClient - Required method to implement Plugin interface
+// GRPCClient ...
 func (p *Plugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpcx.ClientConn) (interface{}, error) {
 
 	return &Client{client: model.NewOverlayNetworkClient(c)}, nil
-
 }
 
-// GRPCServer - Required method to implement Plugin interface
-
+// GRPCServer ...
 func (p *Plugin) GRPCServer(broker *plugin.GRPCBroker, s *grpcx.Server) error {
-
 	model.RegisterOverlayNetworkServer(s, &Server{Impl: p.Impl})
 	return nil
 }

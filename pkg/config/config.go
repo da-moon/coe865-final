@@ -42,7 +42,6 @@ type AutonomousSystem struct {
 func (c *Config) SaveAsJSON(path string) error {
 
 	ext := filepath.Ext(filepath.Base(path))
-
 	path = strings.TrimSuffix(path, ext)
 	enc, err := jsonutil.EncodeJSONWithIndentation(*c)
 	if err != nil {
@@ -103,9 +102,7 @@ const (
 )
 
 // String ...
-
 func (e ConfigExtension) String() string {
-
 	switch e {
 	case JSON:
 		return "json"
@@ -117,6 +114,5 @@ func (e ConfigExtension) String() string {
 		return "conf"
 	default:
 		return "unknown"
-
 	}
 }

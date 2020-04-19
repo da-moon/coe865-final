@@ -12,27 +12,23 @@ import (
 // OverlayNetwork - this is the struct that implements plugin's actual operations
 type OverlayNetwork struct{}
 
-// EstimateCost - Implementation of EstimateCost method for plugin
+// EstimateCost ...
 func (OverlayNetwork) EstimateCost(req *model.UpdateRequest) (*model.UpdateResponse, error) {
 
 	result := &model.UpdateResponse{}
-
 	result.DestinationAutonomousSystem = new(model.AutonomousSystem)
 	result.DestinationAutonomousSystem.Cost = 123
 	return result, nil
 }
 
-// KeyExchange - Implementation of KeyExchange method for plugin
-
+// KeyExchange ...
 func (OverlayNetwork) KeyExchange(req *model.KeyExchangeRequest) (*model.KeyExchangeResponse, error) {
-
 	result := &model.KeyExchangeResponse{}
 	result.IsOk = true
 	return result, nil
+
 }
-
 func getAPIListener(addr string) (net.Listener, error) {
-
 	x, _ := tcpAddressFromString(addr)
 	l, err := net.Listen("tcp", x.String())
 	if err != nil {
@@ -42,15 +38,14 @@ func getAPIListener(addr string) (net.Listener, error) {
 	}
 	apiListener := &tcpKeepAliveListener{l.(*net.TCPListener)}
 	return apiListener, nil
+
 }
 
 // tcpAddress -
-
 func tcpAddress(ip string, port int) *net.TCPAddr {
 	result := &net.TCPAddr{IP: net.ParseIP(ip), Port: port}
 
 	return result
-
 }
 
 // tcpAddressFromString -
@@ -59,18 +54,16 @@ func tcpAddressFromString(addr string) (*net.TCPAddr, error) {
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "[Err] could not generate tcp address from string")
 	}
-
 	port, err := strconv.Atoi(p)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "[Err] could not generate tcp address from string due to invalid port")
-
 	}
-
 	return tcpAddress(h, port), nil
 }
 
 // tcpKeepAliveListener sets TCP keep-alive timeouts on accepted
 // connections. It's used so dead TCP connections eventually go away.
+
 type tcpKeepAliveListener struct {
 	*net.TCPListener
 }

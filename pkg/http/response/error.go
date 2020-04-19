@@ -13,12 +13,10 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-// LogErrorResponse - logs an errornous server server at level debug
-// on standard logger
+// LogErrorResponse ...
 func LogErrorResponse(r *http.Request, err error, code int, message string) {
 
 	logrus.WithFields(logrus.Fields{
-
 		"host":       r.Host,
 		"address":    r.RemoteAddr,
 		"method":     r.Method,

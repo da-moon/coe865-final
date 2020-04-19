@@ -9,13 +9,10 @@ import (
 	"github.com/palantir/stacktrace"
 )
 
-// DecodeRawConfig takes an io.reader (eg, os.File)
-// that has the raw text format for config and returns
-// parses it into config struct
+// DecodeRawConfig ...
 func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 
 	buf, err := ioutil.ReadAll(r)
-
 	if err != nil {
 		err = stacktrace.Propagate(err, "decode failed due to being unable to read from raw config file")
 		return nil, err
@@ -31,7 +28,6 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		index = index + 1
 	}
 	// populating connected rcs slice
@@ -51,7 +47,6 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 			}
 			if rc != nil {
 				connectedRouteControllers = append(connectedRouteControllers, *rc)
-
 			}
 			index = index + 1
 		}
@@ -77,16 +72,12 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 			index = index + 1
 		}
 	}
-
 	result := c.New(self, connectedRouteControllers, connectedAutonomousSystems)
 	return result, nil
 }
 
-// ExtractRouteControllerFromLine expects a single line string
-// which parses it into a route controller object
-
+// ExtractRouteControllerFromLine ...
 func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
-
 	result := &RouteController{}
 	parts := SanitizeAndSplitLine(input)
 	// fmt.Println("parts", parts, len(parts))
@@ -112,7 +103,6 @@ func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
 
 // ExtractAutonomousSystemFromLine ...
 func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
-
 	result := &AutonomousSystem{}
 	parts := SanitizeAndSplitLine(input)
 	if len(parts) != 3 {
@@ -138,17 +128,16 @@ func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
 	result.LinkCapacity = linkCapacity
 	result.Cost = cost
 	return result, nil
+
 }
 
 // SanitizeAndSplitLine ...
-
 func SanitizeAndSplitLine(input string) []string {
 	input = strings.TrimSpace(trimComment(input))
+
 	parts := strings.Split(input, " ")
 	return parts
-
 }
-
 func trimComment(s string) string {
 	result := s
 	idx := strings.Index(s, ";")

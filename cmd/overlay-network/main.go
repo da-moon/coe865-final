@@ -15,7 +15,6 @@ const EntryPointName = "overlay-network"
 func main() {
 
 	log.SetOutput(ioutil.Discard)
-
 	// Get the command line args. We shortcut "--version" and "-v" to
 	// just show the version.
 	args := os.Args[1:]
@@ -28,18 +27,15 @@ func main() {
 			break
 		}
 	}
-
 	cli := &cli.CLI{
 		Args:     args,
 		Commands: Commands,
 		HelpFunc: cli.BasicHelpFunc(EntryPointName),
 	}
-
 	exitCode, err := cli.Run()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error executing CLI: %s\n", err.Error())
 		os.Exit(1)
 	}
-
 	os.Exit(exitCode)
 }

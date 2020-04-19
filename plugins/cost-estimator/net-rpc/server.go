@@ -15,7 +15,6 @@ type Server struct {
 func (s *Server) EstimateCost(_req *model.UpdateRequest, _resp *model.UpdateResponse) error {
 
 	_resp, err := s.Impl.EstimateCost(_req)
-
 	if err != nil {
 		err = stacktrace.Propagate(err, "EstimateCost call failed with request %#v", _req)
 		return err
@@ -24,9 +23,7 @@ func (s *Server) EstimateCost(_req *model.UpdateRequest, _resp *model.UpdateResp
 }
 
 // KeyExchange ...
-
 func (s *Server) KeyExchange(_req *model.KeyExchangeRequest, _resp *model.KeyExchangeResponse) error {
-
 	_resp, err := s.Impl.KeyExchange(_req)
 	if err != nil {
 		err = stacktrace.Propagate(err, "KeyExchange call failed with request %#v", _req)

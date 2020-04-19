@@ -32,11 +32,10 @@ var versionInfoTmpl = `
   go version:       {{.goVersion}}
 `
 
-// Print returns version information.
+// Print ...
 func Print(program string) string {
 
 	m := map[string]string{
-
 		"program":   program,
 		"version":   Version,
 		"revision":  Revision,
@@ -46,7 +45,6 @@ func Print(program string) string {
 		"goVersion": GoVersion,
 	}
 	t := template.Must(template.New("version").Parse(versionInfoTmpl))
-
 	var buf bytes.Buffer
 	if err := t.ExecuteTemplate(&buf, "version", m); err != nil {
 		panic(err)
@@ -54,15 +52,12 @@ func Print(program string) string {
 	return strings.TrimSpace(buf.String())
 }
 
-// Info returns version, branch and revision information.
-
+// Info ...
 func Info() string {
-
 	return fmt.Sprintf("(version=%s, branch=%s, revision=%s)", Version, Branch, Revision)
 }
 
 // BuildContext ...
 func BuildContext() string {
-
 	return fmt.Sprintf("(go=%s, user=%s, date=%s)", GoVersion, BuildUser, BuildDate)
 }

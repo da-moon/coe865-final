@@ -9,12 +9,7 @@
             {
                 "match": "\\.go$",
                 "isAsync": true,
-                "cmd": "gocmt -i -d ."
-            },
-            {
-                "match": "\\.go$",
-                "isAsync": true,
-                "cmd": "goimports -w ."
+                "cmd": "make -j$(nproc) go-format"
             }
         ]
     }

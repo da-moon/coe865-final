@@ -35,14 +35,12 @@ var _ cli.Command = &Command{}
 func (c *Command) Run(args []string) int {
 
 	c.Ui = &cli.PrefixedUi{
-
 		OutputPrefix: "==> ",
 		InfoPrefix:   "    ",
 		ErrorPrefix:  "==> ",
 		WarnPrefix:   "==> ",
 		Ui:           c.Ui,
 	}
-
 	c.args = args
 	config := c.readConfig()
 	if config == nil {
@@ -72,10 +70,8 @@ func (c *Command) Run(args []string) int {
 }
 
 func (c *Command) handleSignals(config *config.Config, core *Core) int {
-
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
-
 WAIT:
 	var sig os.Signal
 	select {
@@ -85,25 +81,21 @@ WAIT:
 		sig = os.Interrupt
 	case <-core.ShutdownCh():
 		return 0
-
 	}
 	c.Ui.Output(fmt.Sprintf("Caught signal: %v", sig))
 	if sig == syscall.SIGHUP {
 		config = c.handleReload(config, core)
 		goto WAIT
 	}
-
 	graceful := false
 	if sig == os.Interrupt {
 		graceful = true
 	} else if sig == syscall.SIGTERM {
 		graceful = true
 	}
-
 	if !graceful {
 		return 1
 	}
-
 	gracefulCh := make(chan struct{})
 	c.Ui.Output("Gracefully shutting down core...")
 	go func() {
@@ -113,7 +105,6 @@ WAIT:
 		}
 		close(gracefulCh)
 	}()
-
 	select {
 	case <-signalCh:
 		return 1
@@ -122,17 +113,15 @@ WAIT:
 	case <-gracefulCh:
 		return 0
 	}
+
 }
-
 func (c *Command) handleReload(config *config.Config, core *Core) *config.Config {
-
 	c.Ui.Output("Reloading configuration...")
 	newConf := c.readConfig()
 	if newConf == nil {
 		c.Ui.Error(fmt.Sprintf("[ERROR] Failed to reload configs"))
 		return config
 	}
-
 	minLevel := logutils.LogLevel(strings.ToUpper(newConf.LogLevel))
 	if view.ValidateLevelFilter(minLevel, c.logFilter) {
 		c.logFilter.SetMinLevel(minLevel)
@@ -140,41 +129,35 @@ func (c *Command) handleReload(config *config.Config, core *Core) *config.Config
 		c.Ui.Error(fmt.Sprintf(
 			"[ERROR] Invalid log level: %s. Valid log levels are: %v",
 			minLevel, c.logFilter.Levels))
-
 		newConf.LogLevel = config.LogLevel
 	}
-
 	return newConf
+
 }
 
 // Synopsis ...
-
 func (c *Command) Synopsis() string {
 	return "custom overlay network"
+
 }
 
 // Help ...
-
 // @TODO update
 func (c *Command) Help() string {
 	helpText := `
 Usage: overlay-network daemon [options]
-
   Starts our custom overlay network daemon. it is a long running process
   that preiodically sends updates to other connected
-
 Options:
-
   -rpc-port=8080                Address to bind the daemon message brodcaster.
   -dev                          starts overlay network agent in development mode
   -config-file=foo.json         Path to a JSON file to read configuration from.
   -log-level=info               daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
+
+
   -cron='@every 10s'            message sending interval, in cron format.
-
-
 `
-
 	return strings.TrimSpace(helpText)
 }
 func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
@@ -182,10 +165,9 @@ func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
 	c.Ui.Output("Creating overlay network daemon core...")
 	core, err := Create(config, logOutput)
 	if err != nil {
+
 		c.Ui.Error(fmt.Sprintf("[ERROR] Failed to create the overlay network daemon core: %v", err))
-
 		return nil
-
 	}
 	return core
 }

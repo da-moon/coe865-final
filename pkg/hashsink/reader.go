@@ -11,8 +11,7 @@ import (
 
 // Reader ...
 type Reader struct {
-	reader io.Reader
-
+	reader     io.Reader
 	md5Hash    hash.Hash
 	sha256Hash hash.Hash
 }
@@ -21,9 +20,7 @@ type Reader struct {
 func NewReader(
 	reader io.Reader,
 	size int64,
-
 ) *Reader {
-
 	sha256Hash := sha256.New()
 	md5Hash := md5.New()
 	if size >= 0 {
@@ -40,7 +37,6 @@ func NewReader(
 func (r *Reader) Read(p []byte) (n int, err error) {
 
 	n, err = r.reader.Read(p)
-
 	if n > 0 {
 		if r.md5Hash != nil {
 			r.md5Hash.Write(p[:n])
@@ -49,14 +45,11 @@ func (r *Reader) Read(p []byte) (n int, err error) {
 			r.sha256Hash.Write(p[:n])
 		}
 	}
-
 	return
 }
 
 // MD5 ...
-
 func (r *Reader) MD5() []byte {
-
 	if r.md5Hash != nil {
 		return r.md5Hash.Sum(nil)
 	}
@@ -65,7 +58,6 @@ func (r *Reader) MD5() []byte {
 
 // SHA256 ...
 func (r *Reader) SHA256() []byte {
-
 	if r.sha256Hash != nil {
 		return r.sha256Hash.Sum(nil)
 	}
@@ -74,26 +66,23 @@ func (r *Reader) SHA256() []byte {
 }
 
 // MD5HexString ...
-
 func (r *Reader) MD5HexString() string {
 	res := r.MD5()
-	return hex.EncodeToString(res)
 
+	return hex.EncodeToString(res)
 }
 
 // MD5Base64String ...
 func (r *Reader) MD5Base64String() string {
 	res := r.MD5()
-	return base64.StdEncoding.EncodeToString(res)
 
+	return base64.StdEncoding.EncodeToString(res)
 }
 
 // SHA256HexString ...
 func (r *Reader) SHA256HexString() string {
 	res := r.SHA256()
-
 	return hex.EncodeToString(res)
-
 }
 
 // SHA256Base64String ...

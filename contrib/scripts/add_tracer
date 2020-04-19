@@ -6,17 +6,22 @@ function add_tracer() {
                     -a -name *.go \
                     -a -not -name *_test.go \
                     -a -not -name *.pb.go | while read file; do \
+        grep "\S" "$file" > "$file-tmp"; \
+        mv "$file-tmp" "$file"; \
         IFS=$'\n'; \
         sed -i 's/.*\[CALL-STACK\].*//g' "$file" ; \
         targets=($(grep -noP '(?<=func ).*?(?= \{)' "$file")); \
+        local counter=1 ; \
         for line in "${targets[@]}";do \
             number=$(echo "$line"|cut -d: -f1) ; \
             signature=$(echo "$line"|cut -d: -f2) ; \
-            to_add="fmt.Println(\"[CALL-STACK] [$file] : $signature \")"; \
-            sed -i.bac "$((number+1)) i $to_add" "$file" ; \
-            unset number; unset signature;unset to_add; \
+            to_add="fmt.Println(\"[CALL-STACK] [$number] [$counter] [$file] : $signature \")"; \
+            sed -i.bac "$(( number + counter )) i $to_add" "$file" ; \
+            ((counter++)) ; \
+            unset number; unset signature;unset to_add;
         done;
-        goimports -w "$file";unset file; unset IFS; \
+        goimports -w "$file";gofmt -w "$file";\
+        unset counter;unset file; unset IFS; \
     done;
 }
 if [ -z "${BASH_SOURCE+x}" ]; then

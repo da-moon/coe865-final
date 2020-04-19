@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	handlers "github.com/da-moon/coe865-final/pkg/http/handlers"
-
 	"github.com/gorilla/mux"
 	"github.com/gorilla/rpc/v2"
 	"github.com/gorilla/rpc/v2/json2"
@@ -21,7 +20,6 @@ type JSON2 struct {
 func GenerateRPC2Routes(routes []JSON2) *mux.Router {
 
 	router := mux.NewRouter().PathPrefix("/").Subrouter()
-
 	// router.
 	// 	Methods(http.MethodOptions).
 	// 	HandlerFunc(middlewares.Cors(handlers.Preflight))
@@ -50,14 +48,11 @@ type Route struct {
 	Queries     []string
 }
 
-// GenerateRoutes - Return a new Gorilla Mux Wrapper
-
+// GenerateRoutes ...
 func GenerateRoutes(routes []Route) *mux.Router {
-
 	router := mux.NewRouter().PathPrefix("/").Subrouter()
 	// router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
-
 		router.
 			PathPrefix(route.PathPrefix).
 			Methods(route.Method).
@@ -65,8 +60,6 @@ func GenerateRoutes(routes []Route) *mux.Router {
 			Name(route.Name).
 			Handler(route.HandlerFunc).
 			Queries(route.Queries...)
-
 	}
-
 	return router
 }

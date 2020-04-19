@@ -20,12 +20,10 @@ type ConfigFactory struct {
 	LogLevel          string `json:"log_level" mapstructure:"log_level"`
 }
 
-// DefaultConfigFactory
-// returns a config factory with default values
+// DefaultConfigFactory ...
 func DefaultConfigFactory() *ConfigFactory {
 
 	path, err := os.Getwd()
-
 	if err != nil {
 		panic(err)
 	}
@@ -41,11 +39,7 @@ func DefaultConfigFactory() *ConfigFactory {
 }
 
 // New returns a new config struct
-func (c *ConfigFactory) New(
-	self *RouteController,
-	connectedRouteControllers []RouteController,
-	connectedAutonomousSystems []AutonomousSystem,
-) *Config {
+func (c *ConfigFactory) New(self *RouteController, connectedRouteControllers []RouteController, connectedAutonomousSystems []AutonomousSystem) *Config {
 	result := &Config{
 		Self:                       self,
 		ConnectedRouteControllers:  connectedRouteControllers,
@@ -61,9 +55,7 @@ func (c *ConfigFactory) New(
 }
 
 // MergeFactory ...
-
 func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
-
 	// fmt.Println("MergeFactory")
 	result := *a
 	if b.CostEstimatorPath != "" {
@@ -83,6 +75,5 @@ func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
 		result.Cron = b.Cron
 	}
 	result.DevelopmentMode = b.DevelopmentMode
-
 	return &result
 }

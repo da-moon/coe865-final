@@ -171,7 +171,7 @@ go-clean:
     endif
 	- $(call print_completed_target)
 
-.PHONY:extract-signatures gather-info add-tracer remove-tracer
+.PHONY:extract-signatures gather-info add-tracer remove-tracer 
 .SILENT:extract-signatures gather-info add-tracer remove-tracer
 extract-signatures: 
 	- $(call print_running_target)
@@ -202,5 +202,59 @@ remove-tracer:
 	-a -name *.go \
 	-a -not -name *_test.go \
 	-a -not -name *.pb.go \
-	-exec sed -i 's/.*\[CALL-STACK\].*//g' {} \; -exec goimports -w {} \;  
+	-exec sed -i 's/.*\[CALL-STACK\].*//g' {} \; -exec goimports -w {} \; -exec gofmt -w {} \;   
+	- $(call print_completed_target)
+
+.PHONY:go-imports go-cmt go-fmt go-format
+.SILENT:go-imports go-cmt go-fmt go-format
+go-imports: 
+	- $(call print_running_target)
+	- $(eval command= find . -type f -a -name *.go -exec goimports -w {} \;)
+    ifeq ($(DOCKER_ENV),true)
+	- @$(MAKE) --no-print-directory -f $(THIS_FILE) \
+	shell docker_image="${GO_IMAGE}" \
+	container_name="go_builder_container" \
+	mount_point="/go/src/${GO_PKG}" \
+	cmd="${command}"
+    endif
+    ifeq ($(DOCKER_ENV),false)
+	- @$(MAKE) --no-print-directory \
+	 -f $(THIS_FILE) shell cmd="${command}"
+    endif
+	- $(call print_completed_target)
+go-fmt: 
+	- $(call print_running_target)
+	- $(eval command= find . -type f -a -name *.go -exec gofmt -w {} \;)
+    ifeq ($(DOCKER_ENV),true)
+	- @$(MAKE) --no-print-directory -f $(THIS_FILE) \
+	shell docker_image="${GO_IMAGE}" \
+	container_name="go_builder_container" \
+	mount_point="/go/src/${GO_PKG}" \
+	cmd="${command}"
+    endif
+    ifeq ($(DOCKER_ENV),false)
+	- @$(MAKE) --no-print-directory \
+	 -f $(THIS_FILE) shell cmd="${command}"
+    endif
+	- $(call print_completed_target)
+go-cmt: 
+	- $(call print_running_target)
+	- $(eval command= find . -type f -a -name *.go -exec gocmt -i {} \;)
+    ifeq ($(DOCKER_ENV),true)
+	- @$(MAKE) --no-print-directory -f $(THIS_FILE) \
+	shell docker_image="${GO_IMAGE}" \
+	container_name="go_builder_container" \
+	mount_point="/go/src/${GO_PKG}" \
+	cmd="${command}"
+    endif
+    ifeq ($(DOCKER_ENV),false)
+	- @$(MAKE) --no-print-directory \
+	 -f $(THIS_FILE) shell cmd="${command}"
+    endif
+	- $(call print_completed_target)
+go-format: 
+	- $(call print_running_target)
+	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-imports
+	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-cmt
+	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-fmt
 	- $(call print_completed_target)

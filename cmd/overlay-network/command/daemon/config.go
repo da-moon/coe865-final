@@ -5,7 +5,6 @@ import (
 	"github.com/palantir/stacktrace"
 
 	// "crypto/rand"
-
 	"flag"
 	"fmt"
 
@@ -15,10 +14,8 @@ import (
 func (c *Command) readConfig() *config.Config {
 
 	const entrypoint = "daemon"
-
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
 	cmdConfigFactory := config.DefaultConfigFactory()
-
 	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
 	configFile := flags.ConfigFilePathFlag(cmdFlags)
 	dev := flags.DevFlag(cmdFlags)
@@ -55,6 +52,5 @@ func (c *Command) readConfig() *config.Config {
 		return nil
 	}
 	// fmt.Println("readConfig()  result", result)
-
 	return &result
 }

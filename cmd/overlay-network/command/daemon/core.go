@@ -34,7 +34,6 @@ type Core struct {
 func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 
 	if logOutput == nil {
-
 		logOutput = os.Stderr
 	}
 	logger := log.New(logOutput, "", log.LstdFlags)
@@ -50,9 +49,7 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 }
 
 // Start ...
-
 func (a *Core) Start() error {
-
 	// @TODO check errors
 	a.logger.Printf("overlay network daemon core started!")
 	a.cron.AddFunc(a.conf.Cron, a.EstimateCost())
@@ -62,7 +59,6 @@ func (a *Core) Start() error {
 
 // Shutdown ...
 func (a *Core) Shutdown() error {
-
 	a.shutdownLock.Lock()
 	defer a.shutdownLock.Unlock()
 	a.cron.Stop()
@@ -73,10 +69,9 @@ func (a *Core) Shutdown() error {
 }
 
 // ShutdownCh ...
-
 func (a *Core) ShutdownCh() <-chan struct{} {
-	return a.shutdownCh
 
+	return a.shutdownCh
 }
 
 // EstimateCost ...
@@ -84,13 +79,11 @@ func (a *Core) EstimateCost() func() {
 	return func() {
 		a.lock.Lock()
 		defer a.lock.Unlock()
-
 		path := a.conf.CostEstimatorPath
 		if len(path) == 0 {
 			err := stacktrace.NewError("cost estimator plugin engine binary path is empty")
 			a.logger.Println(fmt.Sprintf(("error : %#v"), err.Error()))
 			return
-
 		}
 		a.logger.Printf("[DEBUG] cost estimator path is %s", path)
 		client := plugin.NewClient(&plugin.ClientConfig{
@@ -116,7 +109,6 @@ func (a *Core) EstimateCost() func() {
 			err = stacktrace.Propagate(err, "failed to return the protocol client for EstimateCost engine connection")
 			a.logger.Printf(fmt.Sprintf(("error : %#v"), err.Error()))
 			return
-
 		}
 		// Request the plugin
 		raw, err := rpcClient.Dispense("cost_estimator_grpc")
@@ -132,7 +124,6 @@ func (a *Core) EstimateCost() func() {
 			err = stacktrace.NewError("failed to convert remote raw client to OverlayNetworkInterface")
 			a.logger.Printf(fmt.Sprintf(("error : %#v"), err.Error()))
 			return
-
 		}
 		// for dst :=range a.conf.ConnectedRouteControllers {
 		req := &model.UpdateRequest{
@@ -148,7 +139,6 @@ func (a *Core) EstimateCost() func() {
 			LinkCapacity: int32(a.conf.ConnectedAutonomousSystems[0].LinkCapacity),
 			Cost:         int32(a.conf.ConnectedAutonomousSystems[0].Cost),
 		}
-
 		res, err := overlay.EstimateCost(req)
 		if err != nil {
 			err = stacktrace.Propagate(err, "cost estimator failed to EstimateCost given input")
@@ -157,7 +147,5 @@ func (a *Core) EstimateCost() func() {
 		}
 		a.logger.Printf(fmt.Sprintf(("state : %#v"), res))
 		// }
-
 	}
-
 }
