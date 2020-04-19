@@ -9,8 +9,8 @@ include build/makefiles/target/go/go.mk
 # include build/makefiles/target/tests/overlay-network/overlay-network.mk
 THIS_FILE := $(firstword $(MAKEFILE_LIST))
 SELF_DIR := $(dir $(THIS_FILE))
-.PHONY: test build clean run kill proto config temp-clean
-.SILENT: test build clean run kill proto config temp-clean
+.PHONY: test build clean run kill proto config temp-clean extract-signatures
+.SILENT: test build clean run kill proto config temp-clean extract-signatures
 CONFIG_DIR:=$(PWD)/fixtures
 PORT_ONE:=8080 
 PORT_TWO:=8081
@@ -28,6 +28,17 @@ run: kill
 	- $(call print_running_target)
 	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_ONE} > $(PWD)/logs/rc1.log 2>&1 &
 	- $(call print_completed_target)
+extract-signatures: 
+	- $(call print_running_target)
+	- $(MKDIR) metaprogramming && \
+	$(RM) metaprogramming/functions.sig && \
+	find . -type f \
+	-a -name *.go \
+	-a -not -name *_test.go \
+	-a -not -name *.pb.go \
+	-exec grep -oP '(?<=func ).*?(?= \{)' {} >> metaprogramming/functions.sig \;
+	- $(call print_completed_target)
+
 config: 
 	- $(call print_running_target)
 	- $(info $(CONFIG_DIR))
