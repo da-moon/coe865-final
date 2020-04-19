@@ -7,7 +7,6 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/rpc v1.2.0
-	github.com/hashicorp/go-plugin v1.2.0
 	github.com/hashicorp/logutils v1.0.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
 	github.com/json-iterator/go v1.1.9
