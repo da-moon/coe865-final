@@ -37,7 +37,7 @@ clean:
 	- $(call print_running_target)
 	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-clean
 	- $(call print_completed_target)
-kill : go-clean
+kill : 
 	- $(call print_running_target)
 	- $(RM) $(PWD)/server.log
 	- for pid in $(shell ps  | grep "overlay-network" | awk '{print $$1}'); do kill -9 "$$pid"; done
