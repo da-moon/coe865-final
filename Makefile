@@ -9,8 +9,8 @@ include build/makefiles/target/go/go.mk
 # include build/makefiles/target/tests/overlay-network/overlay-network.mk
 THIS_FILE := $(firstword $(MAKEFILE_LIST))
 SELF_DIR := $(dir $(THIS_FILE))
-.PHONY: test build clean run kill proto config temp-clean extract-signatures
-.SILENT: test build clean run kill proto config temp-clean extract-signatures
+.PHONY: test build clean run kill proto config temp-clean extract-signatures gather-info
+.SILENT: test build clean run kill proto config temp-clean extract-signatures gather-info
 CONFIG_DIR:=$(PWD)/fixtures
 PORT_ONE:=8080 
 PORT_TWO:=8081
@@ -37,6 +37,12 @@ extract-signatures:
 	-a -not -name *_test.go \
 	-a -not -name *.pb.go \
 	-exec grep -oP '(?<=func ).*?(?= \{)' {} >> metaprogramming/functions.sig \;
+	- $(call print_completed_target)
+
+gather-info: 
+	- $(call print_running_target)
+	- chmod +x "$(PWD)/contrib/scripts/generate_functions_synopsis"
+	- /bin/bash -c "$(PWD)/contrib/scripts/generate_functions_synopsis $(PWD) $(PWD)/metaprogramming/functions.md"
 	- $(call print_completed_target)
 
 config: 
