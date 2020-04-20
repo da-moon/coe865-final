@@ -2,19 +2,17 @@ package codec_test
 
 import (
 	"bytes"
-	"encoding/xml"
 	"strings"
 	"testing"
 
-	"github.com/da-moon/coe865-final/pkg/codec"
+	"github.com/da-moon/coe865-final/pkg/gossip/codec"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 type sample struct {
-	XMLName    xml.Name `xml:"sample"`
-	Validation string   `json:"validation" xml:"validation"`
-	Test       string   `json:"test" xml:"test"`
+	Validation string `json:"validation" `
+	Test       string `json:"test" `
 }
 
 func TestCodec(t *testing.T) {
