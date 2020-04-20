@@ -7,7 +7,6 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/rpc v1.2.0
-	github.com/hashicorp/go-plugin v1.2.0
 	github.com/hashicorp/logutils v1.0.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
 	github.com/json-iterator/go v1.1.9
@@ -17,7 +16,7 @@ require (
 	github.com/palantir/stacktrace v0.0.0-20161112013806-78658fd2d177
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.5.0
-	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/stretchr/testify v1.5.1
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	google.golang.org/grpc v1.28.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect

@@ -47,6 +47,7 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 
 // Start ...
 func (a *Core) Start() error {
+
 	a.logger.Printf("[INFO] overlay network daemon core started!")
 	entryID, err := a.cron.AddFunc(a.conf.Cron, a.EstimateCost())
 	if err != nil {
@@ -73,11 +74,13 @@ func (a *Core) Shutdown() error {
 
 // ShutdownCh ...
 func (a *Core) ShutdownCh() <-chan struct{} {
+
 	return a.shutdownCh
 }
 
 // EstimateCost ...
 func (a *Core) EstimateCost() func() {
+
 	return func() {
 		req := &model.UpdateRequest{
 			UUID: utils.UUID(),
