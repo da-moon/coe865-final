@@ -1,4 +1,4 @@
-package identity
+package sentry
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDefaultIdentity(t *testing.T) {
+func TestDefaultSentry(t *testing.T) {
 
 	id, err := Default()
 	assert.NoError(t, err)
@@ -20,7 +20,7 @@ func TestDefaultIdentity(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, str)
 }
-func TestNewIdentity(t *testing.T) {
+func TestNewSentry(t *testing.T) {
 	size := 16
 	id, err := New(size)
 	assert.NoError(t, err)

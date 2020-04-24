@@ -81,7 +81,7 @@ func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
 
 	result := &RouteController{}
 	parts := SanitizeAndSplitLine(input)
-	// fmt.Println("parts", parts, len(parts))
+	// // // fmt.Println("parts", parts, len(parts))
 	if len(parts) != 3 {
 		err := stacktrace.NewError("wrong number of parts '%d' in given line. need 3 parts. possible issue with :space: delimiter", len(parts))
 		return nil, err

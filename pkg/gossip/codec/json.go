@@ -12,6 +12,7 @@ type jsonCodec struct {
 
 // NewJSONCodec ...
 func NewJSONCodec(w io.Writer, r io.Reader) Codec {
+
 	enc := json.NewEncoder(w)
 	dec := json.NewDecoder(r)
 	result := &jsonCodec{
@@ -23,11 +24,13 @@ func NewJSONCodec(w io.Writer, r io.Reader) Codec {
 
 // Encode ...
 func (j *jsonCodec) Encode(v interface{}) error {
+
 	return j.enc.Encode(&v)
 }
 
 // Decode ...
 func (j *jsonCodec) Decode() (interface{}, error) {
+
 	var v interface{}
 	err := j.dec.Decode(&v)
 	return v, err

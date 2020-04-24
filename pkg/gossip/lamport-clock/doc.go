@@ -2,4 +2,5 @@
 // uses efficient atomic operations for all of its functions, falling back
 // to a heavy lock only if there are enough CAS failures.
 // taken from
+// github.com/hashicorp/serf
 package lamportclock

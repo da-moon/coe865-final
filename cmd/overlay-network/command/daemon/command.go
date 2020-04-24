@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/da-moon/coe865-final/pkg/config"
+	"github.com/da-moon/coe865-final/pkg/gossip/core"
 	view "github.com/da-moon/coe865-final/pkg/view"
 	"github.com/hashicorp/logutils"
 	cli "github.com/mitchellh/cli"
@@ -150,7 +151,7 @@ Usage: overlay-network daemon [options]
   that preiodically sends updates to other connected
 Options:
   -rpc-port=8080                Address to bind the daemon message brodcaster.
-  -dev                          starts overlay network agent in development mode
+  -dev                          starts overlay network Shutdown in development mode
   -config-file=foo.json         Path to a JSON file to read configuration from.
   -log-level=info               daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
@@ -160,9 +161,10 @@ Options:
 }
 func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
 
+	coreConfig := core.DefaultConfig()
 	// coreConfig.Protocol = uint8(config.Protocol)
 	c.Ui.Output("Creating overlay network daemon core...")
-	core, err := Create(config, logOutput)
+	core, err := Create(config, coreConfig, logOutput)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("[ERROR] Failed to create the overlay network daemon core: %v", err))
 		return nil

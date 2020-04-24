@@ -3,23 +3,7 @@ package flags
 import (
 	"flag"
 	"os"
-	"path/filepath"
 )
-
-// CostEstimatorPathFlag ...
-func CostEstimatorPathFlag(f *flag.FlagSet) *string {
-
-	result := os.Getenv("OVERLAY_COST_ESTIMATOR_PLUGIN")
-	if result == "" {
-		path, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		result = filepath.Join(path, "bin/cost-estimator-plugin")
-	}
-	return f.String("cost-estimator-path", result,
-		"cost estimator plugin path.")
-}
 
 // ConfigFilePathFlag ...
 func ConfigFilePathFlag(f *flag.FlagSet) *string {

@@ -26,7 +26,7 @@ proto:
 	- $(call print_completed_target)
 run: kill
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_ONE} > $(PWD)/logs/rc1.log 2>&1 &
+	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon --dev --log-level=debug -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_TWO} > $(PWD)/logs/rc1.log 2>&1 &
 	- $(call print_completed_target)
 config: 
 	- $(call print_running_target)

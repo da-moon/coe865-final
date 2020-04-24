@@ -34,7 +34,6 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	dev := flags.DevFlag(cmdFlags)
 	logLevel := flags.LogLevelFlag(cmdFlags)
 	port := flags.RPCPortFlag(cmdFlags)
-	costEstimatorPath := flags.CostEstimatorPathFlag(cmdFlags)
 	cron := flags.CronFlag(cmdFlags)
 	err := cmdFlags.Parse(args)
 	if err != nil {
@@ -44,7 +43,6 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	cmdConfigFactory.DevelopmentMode = *dev
 	cmdConfigFactory.LogLevel = *logLevel
 	cmdConfigFactory.Port = *port
-	cmdConfigFactory.CostEstimatorPath = *costEstimatorPath
 	cmdConfigFactory.Cron = *cron
 	factory := config.DefaultConfigFactory()
 	factory = config.MergeFactory(factory, cmdConfigFactory)
