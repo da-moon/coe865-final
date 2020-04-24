@@ -1,11 +1,14 @@
 package config
+
 import (
 	"io"
 	"io/ioutil"
 	"strconv"
 	"strings"
+
 	"github.com/palantir/stacktrace"
 )
+
 // DecodeRawConfig ...
 func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 	buf, err := ioutil.ReadAll(r)
@@ -71,6 +74,7 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 	result := c.New(self, connectedRouteControllers, connectedAutonomousSystems)
 	return result, nil
 }
+
 // ExtractRouteControllerFromLine ...
 func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
 	result := &RouteController{}
@@ -95,6 +99,7 @@ func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
 	result.IP = parts[2]
 	return result, nil
 }
+
 // ExtractAutonomousSystemFromLine ...
 func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
 	result := &AutonomousSystem{}
@@ -123,6 +128,7 @@ func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
 	result.Cost = cost
 	return result, nil
 }
+
 // SanitizeAndSplitLine ...
 func SanitizeAndSplitLine(input string) []string {
 	input = strings.TrimSpace(trimComment(input))

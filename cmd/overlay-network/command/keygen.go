@@ -1,17 +1,22 @@
 package command
+
 import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
 	"strings"
+
 	"github.com/mitchellh/cli"
 )
+
 // KeygenCommand is a Command implementation that generates an encryption
 // key.
 type KeygenCommand struct {
 	Ui cli.Ui
 }
+
 var _ cli.Command = &KeygenCommand{}
+
 // Run ...
 func (c *KeygenCommand) Run(_ []string) int {
 	const length = 32
@@ -28,10 +33,12 @@ func (c *KeygenCommand) Run(_ []string) int {
 	c.Ui.Output(hex.EncodeToString(key))
 	return 0
 }
+
 // Synopsis ...
 func (c *KeygenCommand) Synopsis() string {
 	return "Generates a new encryption key"
 }
+
 // Help ...
 func (c *KeygenCommand) Help() string {
 	helpText := `

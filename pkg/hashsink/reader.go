@@ -1,4 +1,5 @@
 package hashsink
+
 import (
 	"crypto/md5"
 	"crypto/sha256"
@@ -7,12 +8,14 @@ import (
 	"hash"
 	"io"
 )
+
 // Reader ...
 type Reader struct {
 	reader     io.Reader
 	md5Hash    hash.Hash
 	sha256Hash hash.Hash
 }
+
 // New ...
 func NewReader(
 	reader io.Reader,
@@ -29,6 +32,7 @@ func NewReader(
 		sha256Hash: sha256Hash,
 	}
 }
+
 // Read ...
 func (r *Reader) Read(p []byte) (n int, err error) {
 	n, err = r.reader.Read(p)
@@ -42,6 +46,7 @@ func (r *Reader) Read(p []byte) (n int, err error) {
 	}
 	return
 }
+
 // MD5 ...
 func (r *Reader) MD5() []byte {
 	if r.md5Hash != nil {
@@ -49,6 +54,7 @@ func (r *Reader) MD5() []byte {
 	}
 	return nil
 }
+
 // SHA256 ...
 func (r *Reader) SHA256() []byte {
 	if r.sha256Hash != nil {
@@ -56,21 +62,25 @@ func (r *Reader) SHA256() []byte {
 	}
 	return nil
 }
+
 // MD5HexString ...
 func (r *Reader) MD5HexString() string {
 	res := r.MD5()
 	return hex.EncodeToString(res)
 }
+
 // MD5Base64String ...
 func (r *Reader) MD5Base64String() string {
 	res := r.MD5()
 	return base64.StdEncoding.EncodeToString(res)
 }
+
 // SHA256HexString ...
 func (r *Reader) SHA256HexString() string {
 	res := r.SHA256()
 	return hex.EncodeToString(res)
 }
+
 // SHA256Base64String ...
 func (r *Reader) SHA256Base64String() string {
 	res := r.SHA256()

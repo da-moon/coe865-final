@@ -1,13 +1,17 @@
 package main
+
 import (
 	"os"
 	"os/signal"
+
 	command "github.com/da-moon/coe865-final/cmd/overlay-network/command"
 	daemon "github.com/da-moon/coe865-final/cmd/overlay-network/command/daemon"
 	cli "github.com/mitchellh/cli"
 )
+
 // Commands is the mapping of all the available Serf commands.
 var Commands map[string]cli.CommandFactory
+
 func init() {
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	Commands = map[string]cli.CommandFactory{
@@ -38,6 +42,7 @@ func init() {
 		},
 	}
 }
+
 // makeShutdownCh returns a channel that can be used for shutdown
 // notifications for commands. This channel will send a message for every
 // interrupt received.

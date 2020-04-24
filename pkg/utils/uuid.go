@@ -1,9 +1,11 @@
 package utils
+
 import (
 	cryrand "crypto/rand"
 	"fmt"
 	"io"
 )
+
 // UUID ...
 func UUID() string {
 	uuid := make([]byte, 16)

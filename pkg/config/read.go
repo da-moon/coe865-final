@@ -1,10 +1,13 @@
 package config
+
 import (
 	"os"
 	"path/filepath"
 	"sort"
+
 	"github.com/palantir/stacktrace"
 )
+
 // ReadConfigPaths ...
 func (c *ConfigFactory) ReadConfigPaths(paths []string, extension ConfigExtension) (map[string]Config, error) {
 	result := make(map[string]Config)
@@ -86,15 +89,19 @@ func (c *ConfigFactory) ReadConfigPaths(paths []string, extension ConfigExtensio
 	}
 	return result, nil
 }
+
 type dirEnts []os.FileInfo
+
 // Len ...
 func (d dirEnts) Len() int {
 	return len(d)
 }
+
 // Less ...
 func (d dirEnts) Less(i, j int) bool {
 	return d[i].Name() < d[j].Name()
 }
+
 // Swap ...
 func (d dirEnts) Swap(i, j int) {
 	d[i], d[j] = d[j], d[i]

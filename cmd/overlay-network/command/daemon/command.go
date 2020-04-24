@@ -1,4 +1,5 @@
 package daemon
+
 import (
 	"fmt"
 	"io"
@@ -8,14 +9,17 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
 	"github.com/da-moon/coe865-final/pkg/config"
 	view "github.com/da-moon/coe865-final/pkg/view"
 	"github.com/hashicorp/logutils"
 	cli "github.com/mitchellh/cli"
 )
+
 const (
 	gracefulTimeout = 3 * time.Second
 )
+
 // Command ...
 type Command struct {
 	Ui         cli.Ui
@@ -24,7 +28,9 @@ type Command struct {
 	logFilter  *logutils.LevelFilter
 	logger     *log.Logger
 }
+
 var _ cli.Command = &Command{}
+
 // Run ...
 func (c *Command) Run(args []string) int {
 	c.Ui = &cli.PrefixedUi{
@@ -124,10 +130,12 @@ func (c *Command) handleReload(config *config.Config, core *Core) *config.Config
 	}
 	return newConf
 }
+
 // Synopsis ...
 func (c *Command) Synopsis() string {
 	return "custom overlay network"
 }
+
 // Help ...
 // @TODO update
 func (c *Command) Help() string {

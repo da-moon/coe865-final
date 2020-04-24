@@ -1,19 +1,25 @@
 package command
+
 import (
 	"flag"
 	"fmt"
 	"strings"
+
 	flags "github.com/da-moon/coe865-final/cmd/overlay-network/flags"
 	config "github.com/da-moon/coe865-final/pkg/config"
 	cli "github.com/mitchellh/cli"
 )
+
 // ParseConfigCommand is a Command implementation that generates an encryption
 // key.
 type ParseConfigCommand struct {
 	Ui cli.Ui
 }
+
 var _ cli.Command = &ParseConfigCommand{}
+
 const entrypoint = "parse-config"
+
 // Run ...
 func (c *ParseConfigCommand) Run(args []string) int {
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
@@ -57,10 +63,12 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	}
 	return 0
 }
+
 // Synopsis ...
 func (c *ParseConfigCommand) Synopsis() string {
 	return "transform a given config file to sane format"
 }
+
 // Help ...
 func (c *ParseConfigCommand) Help() string {
 	helpText := `

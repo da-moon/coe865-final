@@ -1,9 +1,12 @@
 package config
+
 import (
 	"encoding/json"
 	"io"
+
 	"github.com/mitchellh/mapstructure"
 )
+
 // DecodeJSONConfig ...
 func DecodeJSONConfig(r io.Reader) (*Config, error) {
 	var raw interface{}

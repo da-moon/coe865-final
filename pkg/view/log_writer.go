@@ -1,11 +1,14 @@
 package view
+
 import (
 	"sync"
 )
+
 // LogHandler ...
 type LogHandler interface {
 	HandleLog(string)
 }
+
 // LogWriter ...
 type LogWriter struct {
 	sync.Mutex
@@ -13,6 +16,7 @@ type LogWriter struct {
 	index    int
 	handlers map[LogHandler]struct{}
 }
+
 // NewLogWriter ...
 func NewLogWriter(buf int) *LogWriter {
 	return &LogWriter{
@@ -21,6 +25,7 @@ func NewLogWriter(buf int) *LogWriter {
 		handlers: make(map[LogHandler]struct{}),
 	}
 }
+
 // RegisterHandler ...
 func (l *LogWriter) RegisterHandler(lh LogHandler) {
 	l.Lock()
@@ -38,12 +43,14 @@ func (l *LogWriter) RegisterHandler(lh LogHandler) {
 		lh.HandleLog(l.logs[i])
 	}
 }
+
 // DeregisterHandler ...
 func (l *LogWriter) DeregisterHandler(lh LogHandler) {
 	l.Lock()
 	defer l.Unlock()
 	delete(l.handlers, lh)
 }
+
 // Write ...
 func (l *LogWriter) Write(p []byte) (n int, err error) {
 	l.Lock()

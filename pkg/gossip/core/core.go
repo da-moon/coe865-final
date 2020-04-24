@@ -1,5 +1,8 @@
 package core
 
+import "sync"
+
+// Core ...
 type Core interface {
 }
 type core struct {

@@ -1,4 +1,5 @@
 package hashsink
+
 import (
 	"crypto/md5"
 	"crypto/sha256"
@@ -7,12 +8,14 @@ import (
 	"hash"
 	"io"
 )
+
 // Writer ...
 type Writer struct {
 	writer     io.Writer
 	md5Hash    hash.Hash
 	sha256Hash hash.Hash
 }
+
 // NewWriter ...
 func NewWriter(
 	writer io.Writer,
@@ -25,6 +28,7 @@ func NewWriter(
 		sha256Hash: sha256Hash,
 	}
 }
+
 // Write ...
 func (w *Writer) Write(p []byte) (n int, err error) {
 	n, err = w.writer.Write(p)
@@ -38,6 +42,7 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 	}
 	return
 }
+
 // MD5 ...
 func (w *Writer) MD5() []byte {
 	if w.md5Hash != nil {
@@ -45,6 +50,7 @@ func (w *Writer) MD5() []byte {
 	}
 	return nil
 }
+
 // SHA256 ...
 func (w *Writer) SHA256() []byte {
 	if w.sha256Hash != nil {
@@ -52,21 +58,25 @@ func (w *Writer) SHA256() []byte {
 	}
 	return nil
 }
+
 // MD5HexString ...
 func (w *Writer) MD5HexString() string {
 	res := w.MD5()
 	return hex.EncodeToString(res)
 }
+
 // MD5Base64String ...
 func (w *Writer) MD5Base64String() string {
 	res := w.MD5()
 	return base64.StdEncoding.EncodeToString(res)
 }
+
 // SHA256HexString ...
 func (w *Writer) SHA256HexString() string {
 	res := w.SHA256()
 	return hex.EncodeToString(res)
 }
+
 // SHA256Base64String ...
 func (w *Writer) SHA256Base64String() string {
 	res := w.SHA256()
