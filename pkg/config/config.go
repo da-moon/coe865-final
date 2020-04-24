@@ -11,11 +11,18 @@ import (
 	"github.com/palantir/stacktrace"
 )
 
+const (
+	// DefaultPort ...
+	DefaultPort = 1450
+)
+
 // Config ...
 type Config struct {
 	DevelopmentMode            bool               `json:"development_mode" mapstructure:"development_mode"`
 	Protocol                   int                `json:"protocol" mapstructure:"protocol"`
 	Port                       int                `json:"port" mapstructure:"port"`
+	MinPeers                   int                `json:"min_peers" mapstructure:"min_peers"`
+	MaxPeers                   int                `json:"max_peers" mapstructure:"max_peers"`
 	Cron                       string             `json:"cron" mapstructure:"cron"`
 	CostEstimatorPath          string             `json:"cost_estimator_path" mapstructure:"cost_estimator_path"`
 	LogLevel                   string             `json:"log_level" mapstructure:"log_level"`
@@ -40,6 +47,7 @@ type AutonomousSystem struct {
 
 // SaveAsJSON ...
 func (c *Config) SaveAsJSON(path string) error {
+
 	ext := filepath.Ext(filepath.Base(path))
 	path = strings.TrimSuffix(path, ext)
 	enc, err := jsonutil.EncodeJSONWithIndentation(*c)
@@ -50,13 +58,13 @@ func (c *Config) SaveAsJSON(path string) error {
 	path = path + ".json"
 	// checking to see if target exists
 	// delete if stat was successful (i.e exists ...)
-	// fmt.Println("SaveAsJSON target to stat", path)
+	// // fmt.Println("SaveAsJSON target to stat", path)
 	_, err = os.Stat(path)
 	if err == nil {
 		err = os.Remove(path)
 		if err != nil {
 			stacktrace.Propagate(err, "could not remove old json config at %s", path)
-			// fmt.Println("err", err)
+			// // fmt.Println("err", err)
 			return err
 		}
 	}
@@ -102,6 +110,7 @@ const (
 
 // String ...
 func (e ConfigExtension) String() string {
+
 	switch e {
 	case JSON:
 		return "json"

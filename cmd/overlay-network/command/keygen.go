@@ -19,6 +19,7 @@ var _ cli.Command = &KeygenCommand{}
 
 // Run ...
 func (c *KeygenCommand) Run(_ []string) int {
+
 	const length = 32
 	key := make([]byte, length)
 	n, err := rand.Reader.Read(key)
@@ -36,11 +37,13 @@ func (c *KeygenCommand) Run(_ []string) int {
 
 // Synopsis ...
 func (c *KeygenCommand) Synopsis() string {
+
 	return "Generates a new encryption key"
 }
 
 // Help ...
 func (c *KeygenCommand) Help() string {
+
 	helpText := `
 Usage: overlay-network keygen
   Generates a new 32 byte long encryption key that can be used to for

@@ -10,6 +10,7 @@ import (
 
 // ReadConfigPaths ...
 func (c *ConfigFactory) ReadConfigPaths(paths []string, extension ConfigExtension) (map[string]Config, error) {
+
 	result := make(map[string]Config)
 	for _, path := range paths {
 		f, err := os.Open(path)
@@ -94,15 +95,18 @@ type dirEnts []os.FileInfo
 
 // Len ...
 func (d dirEnts) Len() int {
+
 	return len(d)
 }
 
 // Less ...
 func (d dirEnts) Less(i, j int) bool {
+
 	return d[i].Name() < d[j].Name()
 }
 
 // Swap ...
 func (d dirEnts) Swap(i, j int) {
+
 	d[i], d[j] = d[j], d[i]
 }

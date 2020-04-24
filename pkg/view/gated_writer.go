@@ -15,6 +15,7 @@ type GatedWriter struct {
 
 // Flush ...
 func (w *GatedWriter) Flush() {
+
 	w.lock.Lock()
 	w.flush = true
 	w.lock.Unlock()
@@ -26,6 +27,7 @@ func (w *GatedWriter) Flush() {
 
 // Write ...
 func (w *GatedWriter) Write(p []byte) (n int, err error) {
+
 	w.lock.RLock()
 	defer w.lock.RUnlock()
 	if w.flush {

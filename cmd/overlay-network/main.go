@@ -13,6 +13,7 @@ import (
 const EntryPointName = "overlay-network"
 
 func main() {
+
 	log.SetOutput(ioutil.Discard)
 	// Get the command line args. We shortcut "--version" and "-v" to
 	// just show the version.

@@ -8,6 +8,7 @@ import (
 
 // LevelFilter ...
 func LevelFilter() *logutils.LevelFilter {
+
 	return &logutils.LevelFilter{
 		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERR"},
 		MinLevel: "INFO",
@@ -17,6 +18,7 @@ func LevelFilter() *logutils.LevelFilter {
 
 // ValidateLevelFilter ...
 func ValidateLevelFilter(minLevel logutils.LogLevel, filter *logutils.LevelFilter) bool {
+
 	for _, level := range filter.Levels {
 		if level == minLevel {
 			return true

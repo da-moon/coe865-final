@@ -20,11 +20,13 @@ var _ cli.Command = &VersionCommand{}
 
 // Help ...
 func (c *VersionCommand) Help() string {
+
 	return fmt.Sprintf("Prints %s version", c.Name)
 }
 
 // Run ...
 func (c *VersionCommand) Run(_ []string) int {
+
 	var versionString bytes.Buffer
 	fmt.Fprintf(&versionString, "%s v%s", c.Name, c.Version)
 	if c.VersionPrerelease != "" {
@@ -39,6 +41,7 @@ func (c *VersionCommand) Run(_ []string) int {
 
 // Synopsis ...
 func (c *VersionCommand) Synopsis() (s string) {
+
 	s = fmt.Sprintf("Prints %s version", c.Name)
 	return s
 }

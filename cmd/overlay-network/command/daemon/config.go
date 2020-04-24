@@ -12,15 +12,16 @@ import (
 )
 
 func (c *Command) readConfig() *config.Config {
+
 	const entrypoint = "daemon"
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
 	cmdConfigFactory := config.DefaultConfigFactory()
+	cmdConfigFactory.Init()
 	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
 	configFile := flags.ConfigFilePathFlag(cmdFlags)
 	dev := flags.DevFlag(cmdFlags)
 	logLevel := flags.LogLevelFlag(cmdFlags)
 	port := flags.RPCPortFlag(cmdFlags)
-	costEstimatorPath := flags.CostEstimatorPathFlag(cmdFlags)
 	cron := flags.CronFlag(cmdFlags)
 	err := cmdFlags.Parse(c.args)
 	if err != nil {
@@ -35,7 +36,6 @@ func (c *Command) readConfig() *config.Config {
 	cmdConfigFactory.DevelopmentMode = *dev
 	cmdConfigFactory.LogLevel = *logLevel
 	cmdConfigFactory.Port = *port
-	cmdConfigFactory.CostEstimatorPath = *costEstimatorPath
 	cmdConfigFactory.Cron = *cron
 	factory := config.DefaultConfigFactory()
 	factory = config.MergeFactory(factory, cmdConfigFactory)
@@ -50,6 +50,6 @@ func (c *Command) readConfig() *config.Config {
 		c.Ui.Error(fmt.Sprintf("[ERROR]: %s", err.Error()))
 		return nil
 	}
-	// fmt.Println("readConfig()  result", result)
+	// // fmt.Println("readConfig()  result", result)
 	return &result
 }

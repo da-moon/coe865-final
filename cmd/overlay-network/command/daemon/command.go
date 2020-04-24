@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/da-moon/coe865-final/pkg/config"
+	"github.com/da-moon/coe865-final/pkg/gossip/core"
 	view "github.com/da-moon/coe865-final/pkg/view"
 	"github.com/hashicorp/logutils"
 	cli "github.com/mitchellh/cli"
@@ -33,6 +34,7 @@ var _ cli.Command = &Command{}
 
 // Run ...
 func (c *Command) Run(args []string) int {
+
 	c.Ui = &cli.PrefixedUi{
 		OutputPrefix: "==> ",
 		InfoPrefix:   "    ",
@@ -68,6 +70,7 @@ func (c *Command) Run(args []string) int {
 	)
 }
 func (c *Command) handleSignals(config *config.Config, core *Core) int {
+
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 WAIT:
@@ -113,6 +116,7 @@ WAIT:
 	}
 }
 func (c *Command) handleReload(config *config.Config, core *Core) *config.Config {
+
 	c.Ui.Output("Reloading configuration...")
 	newConf := c.readConfig()
 	if newConf == nil {
@@ -133,19 +137,21 @@ func (c *Command) handleReload(config *config.Config, core *Core) *config.Config
 
 // Synopsis ...
 func (c *Command) Synopsis() string {
+
 	return "custom overlay network"
 }
 
 // Help ...
 // @TODO update
 func (c *Command) Help() string {
+
 	helpText := `
 Usage: overlay-network daemon [options]
   Starts our custom overlay network daemon. it is a long running process
   that preiodically sends updates to other connected
 Options:
   -rpc-port=8080                Address to bind the daemon message brodcaster.
-  -dev                          starts overlay network agent in development mode
+  -dev                          starts overlay network Shutdown in development mode
   -config-file=foo.json         Path to a JSON file to read configuration from.
   -log-level=info               daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
@@ -154,9 +160,11 @@ Options:
 	return strings.TrimSpace(helpText)
 }
 func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
+
+	coreConfig := core.DefaultConfig()
 	// coreConfig.Protocol = uint8(config.Protocol)
 	c.Ui.Output("Creating overlay network daemon core...")
-	core, err := Create(config, logOutput)
+	core, err := Create(config, coreConfig, logOutput)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("[ERROR] Failed to create the overlay network daemon core: %v", err))
 		return nil
@@ -164,6 +172,7 @@ func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
 	return core
 }
 func (c *Command) setupLoggers(config *config.Config) (*view.GatedWriter, *view.LogWriter, io.Writer) {
+
 	logGate := &view.GatedWriter{
 		Writer: &cli.UiWriter{Ui: c.Ui},
 	}

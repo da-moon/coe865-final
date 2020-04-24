@@ -21,11 +21,13 @@ type Sentry struct {
 
 // Default ...
 func Default() (*Sentry, error) {
+
 	return New(defaultSize)
 }
 
 // New ...
 func New(size int) (*Sentry, error) {
+
 	private, err := rsa.GenerateKey(rand.Reader, size)
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not generate a new RSA key with size '%d'", size)
@@ -39,6 +41,7 @@ func New(size int) (*Sentry, error) {
 
 // EncodedPublicKey ...
 func (i *Sentry) EncodedPublicKey() ([]byte, error) {
+
 	pubKey := i.private.PublicKey
 	result, err := x509.MarshalPKIXPublicKey(&pubKey)
 	if err != nil {
@@ -58,6 +61,7 @@ func (i *Sentry) EncodedPublicKey() ([]byte, error) {
 
 // PublicKeyBase64 ...
 func (i *Sentry) PublicKeyBase64() (string, error) {
+
 	marshalled, err := i.EncodedPublicKey()
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not encode public key as base64")
@@ -80,6 +84,7 @@ func (i *Sentry) Sha256() ([]byte, error) {
 
 // Sha256String ...
 func (i *Sentry) Sha256String() (string, error) {
+
 	hash, err := i.Sha256()
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not calculate sha256 hash string of public key")

@@ -19,6 +19,7 @@ type LogWriter struct {
 
 // NewLogWriter ...
 func NewLogWriter(buf int) *LogWriter {
+
 	return &LogWriter{
 		logs:     make([]string, buf),
 		index:    0,
@@ -28,6 +29,7 @@ func NewLogWriter(buf int) *LogWriter {
 
 // RegisterHandler ...
 func (l *LogWriter) RegisterHandler(lh LogHandler) {
+
 	l.Lock()
 	defer l.Unlock()
 	if _, ok := l.handlers[lh]; ok {
@@ -46,6 +48,7 @@ func (l *LogWriter) RegisterHandler(lh LogHandler) {
 
 // DeregisterHandler ...
 func (l *LogWriter) DeregisterHandler(lh LogHandler) {
+
 	l.Lock()
 	defer l.Unlock()
 	delete(l.handlers, lh)
@@ -53,6 +56,7 @@ func (l *LogWriter) DeregisterHandler(lh LogHandler) {
 
 // Write ...
 func (l *LogWriter) Write(p []byte) (n int, err error) {
+
 	l.Lock()
 	defer l.Unlock()
 	n = len(p)

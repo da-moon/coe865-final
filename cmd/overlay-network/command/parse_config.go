@@ -22,6 +22,7 @@ const entrypoint = "parse-config"
 
 // Run ...
 func (c *ParseConfigCommand) Run(args []string) int {
+
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
 	cmdConfigFactory := config.DefaultConfigFactory()
 	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
@@ -33,7 +34,6 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	dev := flags.DevFlag(cmdFlags)
 	logLevel := flags.LogLevelFlag(cmdFlags)
 	port := flags.RPCPortFlag(cmdFlags)
-	costEstimatorPath := flags.CostEstimatorPathFlag(cmdFlags)
 	cron := flags.CronFlag(cmdFlags)
 	err := cmdFlags.Parse(args)
 	if err != nil {
@@ -43,7 +43,6 @@ func (c *ParseConfigCommand) Run(args []string) int {
 	cmdConfigFactory.DevelopmentMode = *dev
 	cmdConfigFactory.LogLevel = *logLevel
 	cmdConfigFactory.Port = *port
-	cmdConfigFactory.CostEstimatorPath = *costEstimatorPath
 	cmdConfigFactory.Cron = *cron
 	factory := config.DefaultConfigFactory()
 	factory = config.MergeFactory(factory, cmdConfigFactory)
@@ -66,11 +65,13 @@ func (c *ParseConfigCommand) Run(args []string) int {
 
 // Synopsis ...
 func (c *ParseConfigCommand) Synopsis() string {
+
 	return "transform a given config file to sane format"
 }
 
 // Help ...
 func (c *ParseConfigCommand) Help() string {
+
 	helpText := `
 Usage: overlay-network parse-config
   reads a config file as defined in project specification and

@@ -13,11 +13,13 @@ var _ flag.Value = new(AppendSliceValue)
 
 // String ...
 func (s *AppendSliceValue) String() string {
+
 	return strings.Join(*s, ",")
 }
 
 // Set ...
 func (s *AppendSliceValue) Set(value string) error {
+
 	if *s == nil {
 		*s = make([]string, 0, 1)
 	}
