@@ -47,6 +47,8 @@ func Create(conf *config.Config, coreConf *core.Config, logOutput io.Writer) (*C
 	}
 	coreConf.LogOutput = logOutput
 	coreConf.DevelopmentMode = conf.DevelopmentMode
+	// fmt.Println("coreConf.DevelopmentMode", coreConf.DevelopmentMode)
+	// fmt.Println("conf.DevelopmentMode", conf.DevelopmentMode)
 	// core.NodeName = conf.
 	// Create a channel to listen for events engines
 	eventCh := make(chan core.Event, core.DefaultEventChannelSize)
@@ -97,19 +99,16 @@ func (a *Core) Start() error {
 		a.logger.Printf(fmt.Sprintf(("[WARN] error : %#v"), err.Error()))
 		return err
 	}
-	// fmt.Println("[INFO] Core.Start() cron job entry ID ", entryID)
-
 	a.logger.Printf("[INFO] cron job entry ID %v", entryID)
-	// fmt.Println("[INFO] Core.Start() Cron job")
 	a.cron.Start()
 
 	go a.eventHandlerLoop()
 	go a.listen()
-	if a.conf.DevelopmentMode == false && len(a.conf.ConnectedRouteControllers) > 0 {
+	// TODO fix this [CRITICAL]
+	if a.conf.DevelopmentMode == true && len(a.conf.ConnectedRouteControllers) > 0 {
 		a.logger.Printf("[INFO] '%s' : connecting to bootstrap nodes ", a.listener.Addr().String())
-		a.bootstrap()
+		go a.bootstrap()
 	}
-
 	return nil
 }
 
@@ -119,27 +118,35 @@ func (a *Core) Start() error {
 // the listener connectiontion
 // to swarm for handling comminucations to/from it
 func (a *Core) listen() {
-	a.logger.Printf("[INFO] agent '%v' : started listening for incomming connections ...", a.ID())
+	a.logger.Printf("[INFO] agent '%v' : started listening for incomming connections on port '%d' ...", a.ID(), a.conf.Port)
 	defer a.listener.Close()
-	for {
-		if a.shutdown {
-			a.logger.Printf("[WARN] agent '%v' : cannot accept any more incomming connection since it has shutdown", a.ID())
 
-		}
-		conn, err := a.listener.Accept()
-		if err != nil {
-			a.logger.Printf("[WARN] listener failed to accept new connection : %v", err)
-			continue
-		}
-		a.logger.Printf("[INFO] node '%v' : recieved an incomming connection from peer with address %v", a.ID(), conn.LocalAddr().String())
-		err = a.swarm.AddPeer(conn)
-		if err != nil {
-			a.logger.Printf("[WARN] %v", err)
-			// closing connection
-			conn.Close()
-			continue
+	for {
+		select {
+		case <-a.shutdownCh:
+			return
+		default:
+			{
+				if a.shutdown {
+					a.logger.Printf("[WARN] agent '%v' : cannot accept any more incomming connection since it has shutdown", a.ID())
+				}
+				conn, err := a.listener.Accept()
+				if err != nil {
+					a.logger.Printf("[WARN] listener failed to accept new connection : %v", err)
+					continue
+				}
+				a.logger.Printf("[INFO] node '%v' : recieved an incomming connection from peer with address %v", a.ID(), conn.LocalAddr().String())
+				err = a.swarm.AddPeer(conn)
+				if err != nil {
+					a.logger.Printf("[WARN] %v", err)
+					// closing connection
+					conn.Close()
+					continue
+				}
+			}
 		}
 	}
+
 }
 
 // bootstrap makes the agent establish connections to a set of node address
@@ -167,7 +174,7 @@ func (a *Core) bootstrap() {
 	}
 }
 func (a *Core) eventHandlerLoop() {
-	// fmt.Println("[INFO] Core.eventHandlerLoop()")
+	// // fmt.Println("[INFO] Core.eventHandlerLoop()")
 
 	a.logger.Printf("[INFO] agent: started event listener")
 	for {
@@ -204,7 +211,8 @@ func (a *Core) DeregisterEventHandler(eh EventHandler) {
 	}
 }
 
-// ID ...
+// ID returns the first 6 characters of base64
+// encoded public key to be used as agent ID
 func (a *Core) ID() string {
 
 	result, err := a.sentry.PublicKeyBase64()
@@ -212,7 +220,7 @@ func (a *Core) ID() string {
 		err = stacktrace.Propagate(err, "could not get node ID")
 		panic(err)
 	}
-	return result
+	return result[:8]
 }
 
 // Shutdown ...

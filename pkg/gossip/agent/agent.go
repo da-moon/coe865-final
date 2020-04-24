@@ -54,25 +54,25 @@ func New(conf *Config, coreConf *core.Config) (*Agent, error) {
 		}
 		logger = log.New(logOutput, "", log.LstdFlags)
 	}
-	// fmt.Println("[INFO] preparing swarm conf")
+	// // fmt.Println("[INFO] preparing swarm conf")
 	swarmConf := &swarm.Config{
 		MinPeers:   conf.MinPeers,
 		MaxPeers:   conf.MaxPeers,
 		RetryDelay: conf.RetryDelay,
 	}
-	// fmt.Println("[INFO] getting sentry")
+	// // fmt.Println("[INFO] getting sentry")
 	k, err := sentry.Default()
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not create a new gossip agent due to an issue with generating RSA key for the node")
 		return nil, err
 	}
-	// fmt.Println("[INFO] getting listener")
+	// // fmt.Println("[INFO] getting listener")
 	listener, err := net.Listen("tcp", conf.Address)
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not create a new listener for node with address '%s'", conf.Address)
 		return nil, err
 	}
-	// fmt.Println("[INFO] returning result listener")
+	// // fmt.Println("[INFO] returning result listener")
 	result := &Agent{
 		sentry:   k,
 		conf:     conf,
@@ -94,13 +94,13 @@ func (a *Agent) Start() {
 
 	// agent listens to incomming connections in the background
 	a.logger.Printf("[INFO] '%s' : started listening for incomming connections", a.listener.Addr().String())
-	// fmt.Println("[INFO] agent. Start()")
+	// // fmt.Println("[INFO] agent. Start()")
 	go a.listen()
 	if len(a.conf.BootstrapNodes) > 0 {
 		a.logger.Printf("[INFO] '%s' : connecting to bootstrap nodes", a.listener.Addr().String())
 		a.connect(a.conf.BootstrapNodes)
 	}
-	// fmt.Println("[INFO] agent.Start() About to send Hello MSG")
+	// // fmt.Println("[INFO] agent.Start() About to send Hello MSG")
 	a.coreConf.AgentHelloEvent("my-hello-event", jsonutil.EncodeJSONWithoutErr(map[string]string{
 		"key": "value",
 	}))
@@ -126,7 +126,7 @@ func (a *Agent) Start() {
 // the listener connectiontion
 // to swarm for handling comminucations to/from it
 func (a *Agent) listen() {
-	// fmt.Println("[INFO] agent.listen()")
+	// // fmt.Println("[INFO] agent.listen()")
 
 	defer a.listener.Close()
 	for {

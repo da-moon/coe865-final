@@ -97,12 +97,12 @@ func (s State) String() string {
 
 // AgentHelloEvent ...
 func (c *Config) AgentHelloEvent(name string, payload []byte) {
-	// fmt.Println("[INFO] AgentHelloEvent()")
+	// // fmt.Println("[INFO] AgentHelloEvent()")
 
 	c.Logger.Printf("[DEBUG] core: Requesting agent hello send: %s. Payload: %#v",
 		name, string(payload))
 	if c.ExternalEventCh != nil {
-		// fmt.Println("[INFO] AgentHelloEvent() sending")
+		// // fmt.Println("[INFO] AgentHelloEvent() sending")
 
 		c.ExternalEventCh <- HelloEvent{
 			LTime:   c.eventClock.Time(),

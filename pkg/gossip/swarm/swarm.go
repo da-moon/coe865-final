@@ -39,7 +39,7 @@ func New(conf *Config, coreConf *core.Config) *Swarm {
 		}
 		logger = log.New(logOutput, "", log.LstdFlags)
 	}
-	// fmt.Println("[INFO] returning swarm")
+	// // fmt.Println("[INFO] returning swarm")
 	result := &Swarm{
 		shutdownCh:  make(chan struct{}),
 		logger:      logger,

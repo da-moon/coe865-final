@@ -37,19 +37,21 @@ func (c *Command) readConfig() *config.Config {
 	cmdConfigFactory.LogLevel = *logLevel
 	cmdConfigFactory.Port = *port
 	cmdConfigFactory.Cron = *cron
-	factory := config.DefaultConfigFactory()
-	factory = config.MergeFactory(factory, cmdConfigFactory)
+	// factory := config.DefaultConfigFactory()
+	// factory = config.MergeFactory(factory, cmdConfigFactory)
+	factory := cmdConfigFactory
 	mapping, err := factory.ReadConfigPaths([]string{*configFile}, config.JSON)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("[ERROR]: %s", err.Error()))
 		return nil
 	}
+	// fmt.Println("factory", "config", factory.DevelopmentMode)
 	result, ok := mapping[*configFile]
 	if !ok {
 		err := stacktrace.NewError("could not extract config file from map with key '%s'", *configFile)
 		c.Ui.Error(fmt.Sprintf("[ERROR]: %s", err.Error()))
 		return nil
 	}
-	// // fmt.Println("readConfig()  result", result)
+	// // // fmt.Println("readConfig()  result", result)
 	return &result
 }

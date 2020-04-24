@@ -58,13 +58,13 @@ func (c *Config) SaveAsJSON(path string) error {
 	path = path + ".json"
 	// checking to see if target exists
 	// delete if stat was successful (i.e exists ...)
-	// // fmt.Println("SaveAsJSON target to stat", path)
+	// // // fmt.Println("SaveAsJSON target to stat", path)
 	_, err = os.Stat(path)
 	if err == nil {
 		err = os.Remove(path)
 		if err != nil {
 			stacktrace.Propagate(err, "could not remove old json config at %s", path)
-			// // fmt.Println("err", err)
+			// // // fmt.Println("err", err)
 			return err
 		}
 	}
