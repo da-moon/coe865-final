@@ -1,12 +1,10 @@
 package daemon
-
 import (
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"sync"
-
 	model "github.com/da-moon/coe865-final/model"
 	config "github.com/da-moon/coe865-final/pkg/config"
 	utils "github.com/da-moon/coe865-final/pkg/utils"
@@ -14,7 +12,6 @@ import (
 	stacktrace "github.com/palantir/stacktrace"
 	cron "github.com/robfig/cron/v3"
 )
-
 // Core ...
 type Core struct {
 	conf         *config.Config
@@ -25,10 +22,8 @@ type Core struct {
 	shutdownLock sync.Mutex
 	cron         *cron.Cron
 }
-
 // Create ...
 func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
-
 	if logOutput == nil {
 		logOutput = os.Stderr
 	}
@@ -44,10 +39,8 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 	core.logger.SetPrefix("[Core]")
 	return core, nil
 }
-
 // Start ...
 func (a *Core) Start() error {
-
 	a.logger.Printf("[INFO] overlay network daemon core started!")
 	entryID, err := a.cron.AddFunc(a.conf.Cron, a.EstimateCost())
 	if err != nil {
@@ -59,10 +52,8 @@ func (a *Core) Start() error {
 	a.cron.Start()
 	return nil
 }
-
 // Shutdown ...
 func (a *Core) Shutdown() error {
-
 	a.shutdownLock.Lock()
 	defer a.shutdownLock.Unlock()
 	a.cron.Stop()
@@ -71,16 +62,12 @@ func (a *Core) Shutdown() error {
 	a.logger.Println("[INFO]", "overlay network daemon core: shutdown complete")
 	return nil
 }
-
 // ShutdownCh ...
 func (a *Core) ShutdownCh() <-chan struct{} {
-
 	return a.shutdownCh
 }
-
 // EstimateCost ...
 func (a *Core) EstimateCost() func() {
-
 	return func() {
 		req := &model.UpdateRequest{
 			UUID: utils.UUID(),

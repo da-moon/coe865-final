@@ -1,8 +1,6 @@
 package main
-
 // GitCommit ... The git commit that was compiled. This will be filled in by the compiler.
 var GitCommit string
-
 const (
 	// Version ... The main version number that is being run at the moment.
 	Version = "0.0.1"

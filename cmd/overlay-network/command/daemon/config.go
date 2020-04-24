@@ -1,18 +1,13 @@
 package daemon
-
 import (
 	"github.com/da-moon/coe865-final/pkg/config"
 	"github.com/palantir/stacktrace"
-
 	// "crypto/rand"
 	"flag"
 	"fmt"
-
 	flags "github.com/da-moon/coe865-final/cmd/overlay-network/flags"
 )
-
 func (c *Command) readConfig() *config.Config {
-
 	const entrypoint = "daemon"
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
 	cmdConfigFactory := config.DefaultConfigFactory()

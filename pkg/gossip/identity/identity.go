@@ -1,27 +1,21 @@
 package identity
-
 import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
-
 	"github.com/palantir/stacktrace"
 )
-
 const defaultSize = 4096
-
 // Identity is used as identitier of a peer.
 type Identity struct {
 	private *rsa.PrivateKey
 }
-
 // Default ...
 func Default() (*Identity, error) {
 	return New(defaultSize)
 }
-
 // New ...
 func New(size int) (*Identity, error) {
 	private, err := rsa.GenerateKey(rand.Reader, size)
@@ -29,13 +23,11 @@ func New(size int) (*Identity, error) {
 		err = stacktrace.Propagate(err, "could not generate a new RSA key with size '%d'", size)
 		return nil, err
 	}
-
 	result := &Identity{
 		private: private,
 	}
 	return result, nil
 }
-
 // Sha256 ...
 func (i *Identity) Sha256() ([]byte, error) {
 	pubKey := i.private.PublicKey
@@ -55,7 +47,6 @@ func (i *Identity) Sha256() ([]byte, error) {
 	result := sha256.Sum256(derEncoded)
 	return result[:], nil
 }
-
 // Sha256String ...
 func (i *Identity) Sha256String() (string, error) {
 	hash, err := i.Sha256()

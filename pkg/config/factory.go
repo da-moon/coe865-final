@@ -1,13 +1,10 @@
 package config
-
 import (
 	"os"
 	"path/filepath"
 )
-
 // ProtocolVersion ...
 const ProtocolVersion = 1
-
 // ConfigFactory is used to add extra metadata
 // the server needs to a config struct
 // parsed from raw config file
@@ -19,10 +16,8 @@ type ConfigFactory struct {
 	CostEstimatorPath string `json:"cost_estimator_path" mapstructure:"cost_estimator_path"`
 	LogLevel          string `json:"log_level" mapstructure:"log_level"`
 }
-
 // DefaultConfigFactory ...
 func DefaultConfigFactory() *ConfigFactory {
-
 	path, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -37,10 +32,8 @@ func DefaultConfigFactory() *ConfigFactory {
 	}
 	return result
 }
-
 // New returns a new config struct
 func (c *ConfigFactory) New(self *RouteController, connectedRouteControllers []RouteController, connectedAutonomousSystems []AutonomousSystem) *Config {
-
 	result := &Config{
 		Self:                       self,
 		ConnectedRouteControllers:  connectedRouteControllers,
@@ -54,10 +47,8 @@ func (c *ConfigFactory) New(self *RouteController, connectedRouteControllers []R
 	result.LogLevel = c.LogLevel
 	return result
 }
-
 // MergeFactory ...
 func MergeFactory(a, b *ConfigFactory) *ConfigFactory {
-
 	// fmt.Println("MergeFactory")
 	result := *a
 	if b.CostEstimatorPath != "" {

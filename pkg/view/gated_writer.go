@@ -1,10 +1,8 @@
 package view
-
 import (
 	"io"
 	"sync"
 )
-
 // GatedWriter ...
 type GatedWriter struct {
 	Writer io.Writer
@@ -12,7 +10,6 @@ type GatedWriter struct {
 	flush  bool
 	lock   sync.RWMutex
 }
-
 // Flush ...
 func (w *GatedWriter) Flush() {
 	w.lock.Lock()
@@ -23,10 +20,8 @@ func (w *GatedWriter) Flush() {
 	}
 	w.buf = nil
 }
-
 // Write ...
 func (w *GatedWriter) Write(p []byte) (n int, err error) {
-
 	w.lock.RLock()
 	defer w.lock.RUnlock()
 	if w.flush {

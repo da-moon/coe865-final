@@ -1,5 +1,4 @@
 package codec
-
 // Codec interface must be implemented
 // by any encoder/decoder
 // it Encodes data and then flushes it

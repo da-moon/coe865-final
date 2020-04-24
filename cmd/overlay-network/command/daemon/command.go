@@ -1,5 +1,4 @@
 package daemon
-
 import (
 	"fmt"
 	"io"
@@ -9,17 +8,14 @@ import (
 	"strings"
 	"syscall"
 	"time"
-
 	"github.com/da-moon/coe865-final/pkg/config"
 	view "github.com/da-moon/coe865-final/pkg/view"
 	"github.com/hashicorp/logutils"
 	cli "github.com/mitchellh/cli"
 )
-
 const (
 	gracefulTimeout = 3 * time.Second
 )
-
 // Command ...
 type Command struct {
 	Ui         cli.Ui
@@ -28,12 +24,9 @@ type Command struct {
 	logFilter  *logutils.LevelFilter
 	logger     *log.Logger
 }
-
 var _ cli.Command = &Command{}
-
 // Run ...
 func (c *Command) Run(args []string) int {
-
 	c.Ui = &cli.PrefixedUi{
 		OutputPrefix: "==> ",
 		InfoPrefix:   "    ",
@@ -69,7 +62,6 @@ func (c *Command) Run(args []string) int {
 	)
 }
 func (c *Command) handleSignals(config *config.Config, core *Core) int {
-
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 WAIT:
@@ -115,7 +107,6 @@ WAIT:
 	}
 }
 func (c *Command) handleReload(config *config.Config, core *Core) *config.Config {
-
 	c.Ui.Output("Reloading configuration...")
 	newConf := c.readConfig()
 	if newConf == nil {
@@ -133,17 +124,13 @@ func (c *Command) handleReload(config *config.Config, core *Core) *config.Config
 	}
 	return newConf
 }
-
 // Synopsis ...
 func (c *Command) Synopsis() string {
-
 	return "custom overlay network"
 }
-
 // Help ...
 // @TODO update
 func (c *Command) Help() string {
-
 	helpText := `
 Usage: overlay-network daemon [options]
   Starts our custom overlay network daemon. it is a long running process
@@ -159,7 +146,6 @@ Options:
 	return strings.TrimSpace(helpText)
 }
 func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
-
 	// coreConfig.Protocol = uint8(config.Protocol)
 	c.Ui.Output("Creating overlay network daemon core...")
 	core, err := Create(config, logOutput)
@@ -170,7 +156,6 @@ func (c *Command) setupCore(config *config.Config, logOutput io.Writer) *Core {
 	return core
 }
 func (c *Command) setupLoggers(config *config.Config) (*view.GatedWriter, *view.LogWriter, io.Writer) {
-
 	logGate := &view.GatedWriter{
 		Writer: &cli.UiWriter{Ui: c.Ui},
 	}

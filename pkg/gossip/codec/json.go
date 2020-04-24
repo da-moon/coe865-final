@@ -1,15 +1,12 @@
 package codec
-
 import (
 	"encoding/json"
 	"io"
 )
-
 type jsonCodec struct {
 	enc *json.Encoder
 	dec *json.Decoder
 }
-
 // NewJSONCodec ...
 func NewJSONCodec(w io.Writer, r io.Reader) Codec {
 	enc := json.NewEncoder(w)
@@ -20,12 +17,10 @@ func NewJSONCodec(w io.Writer, r io.Reader) Codec {
 	}
 	return result
 }
-
 // Encode ...
 func (j *jsonCodec) Encode(v interface{}) error {
 	return j.enc.Encode(&v)
 }
-
 // Decode ...
 func (j *jsonCodec) Decode() (interface{}, error) {
 	var v interface{}

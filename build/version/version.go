@@ -1,5 +1,4 @@
 package version
-
 import (
 	"bytes"
 	"fmt"
@@ -7,7 +6,6 @@ import (
 	"strings"
 	"text/template"
 )
-
 // Build information. Populated at build-time.
 var (
 	// Version ...
@@ -23,7 +21,6 @@ var (
 	// GoVersion ...
 	GoVersion = runtime.Version()
 )
-
 // versionInfoTmpl contains the template used by Info.
 var versionInfoTmpl = `
 {{.program}}, version {{.version}} (branch: {{.branch}}, revision: {{.revision}})
@@ -31,10 +28,8 @@ var versionInfoTmpl = `
   build date:       {{.buildDate}}
   go version:       {{.goVersion}}
 `
-
 // Print ...
 func Print(program string) string {
-
 	m := map[string]string{
 		"program":   program,
 		"version":   Version,
@@ -51,15 +46,11 @@ func Print(program string) string {
 	}
 	return strings.TrimSpace(buf.String())
 }
-
 // Info ...
 func Info() string {
-
 	return fmt.Sprintf("(version=%s, branch=%s, revision=%s)", Version, Branch, Revision)
 }
-
 // BuildContext ...
 func BuildContext() string {
-
 	return fmt.Sprintf("(go=%s, user=%s, date=%s)", GoVersion, BuildUser, BuildDate)
 }
