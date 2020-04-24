@@ -1,13 +1,17 @@
 package config
+
 import (
 	"io"
 	"io/ioutil"
 	"strconv"
 	"strings"
+
 	"github.com/palantir/stacktrace"
 )
+
 // DecodeRawConfig ...
 func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
+
 	buf, err := ioutil.ReadAll(r)
 	if err != nil {
 		err = stacktrace.Propagate(err, "decode failed due to being unable to read from raw config file")
@@ -71,11 +75,13 @@ func (c *ConfigFactory) DecodeRawConfig(r io.Reader) (*Config, error) {
 	result := c.New(self, connectedRouteControllers, connectedAutonomousSystems)
 	return result, nil
 }
+
 // ExtractRouteControllerFromLine ...
 func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
+
 	result := &RouteController{}
 	parts := SanitizeAndSplitLine(input)
-	// fmt.Println("parts", parts, len(parts))
+	// // // fmt.Println("parts", parts, len(parts))
 	if len(parts) != 3 {
 		err := stacktrace.NewError("wrong number of parts '%d' in given line. need 3 parts. possible issue with :space: delimiter", len(parts))
 		return nil, err
@@ -95,8 +101,10 @@ func ExtractRouteControllerFromLine(input string) (*RouteController, error) {
 	result.IP = parts[2]
 	return result, nil
 }
+
 // ExtractAutonomousSystemFromLine ...
 func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
+
 	result := &AutonomousSystem{}
 	parts := SanitizeAndSplitLine(input)
 	if len(parts) != 3 {
@@ -123,13 +131,16 @@ func ExtractAutonomousSystemFromLine(input string) (*AutonomousSystem, error) {
 	result.Cost = cost
 	return result, nil
 }
+
 // SanitizeAndSplitLine ...
 func SanitizeAndSplitLine(input string) []string {
+
 	input = strings.TrimSpace(trimComment(input))
 	parts := strings.Split(input, " ")
 	return parts
 }
 func trimComment(s string) string {
+
 	result := s
 	idx := strings.Index(s, ";")
 	if idx != -1 {
