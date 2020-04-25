@@ -7,6 +7,8 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/da-moon/coe865-final/pkg/gossip/sentry"
+
 	"github.com/da-moon/coe865-final/pkg/gossip/codec"
 	"github.com/da-moon/coe865-final/pkg/gossip/core"
 	"github.com/palantir/stacktrace"
@@ -18,12 +20,14 @@ type Swarm struct {
 	// used for logging
 	logger *log.Logger
 	// used to store swarm config
-	conf        *Config
-	coreConf    *core.Config
-	peerCounter uint32
-	peers       map[uint32]*Peer
-	shutdownCh  chan struct{}
-	state       State
+	conf          *Config
+	coreConf      *core.Config
+	peerCounter   uint32
+	peers         map[string]*Peer
+	shutdownCh    chan struct{}
+	state         State
+	joinsByAddr   map[string]sentry.SignedMessage
+	agentSequence sequencer
 }
 
 // New ...
@@ -45,7 +49,7 @@ func New(conf *Config, coreConf *core.Config) *Swarm {
 		logger:      logger,
 		conf:        conf,
 		coreConf:    coreConf,
-		peers:       make(map[uint32]*Peer),
+		peers:       make(map[string]*Peer),
 		state:       Initialized,
 		peerCounter: 0,
 	}
@@ -60,11 +64,10 @@ func (s *Swarm) Start() {
 	// handle any background tasks here ...
 }
 
-// AddPeer is called on swarm by gossip Shutdown
+// Handshake is called on swarm by gossip Shutdown
 // so that swarm can go through the process of adding
 // it to its list
-func (s *Swarm) AddPeer(conn net.Conn) error {
-
+func (s *Swarm) Handshake(conn net.Conn) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	if s.state != Running {
@@ -77,11 +80,48 @@ func (s *Swarm) AddPeer(conn net.Conn) error {
 		err := stacktrace.NewError("swarm configuration does not allow for adding a new peer. Max number of peers '%d'", s.conf.MaxPeers)
 		return err
 	}
-	s.logger.Printf("[INFO] swarm: creating peer stub for '%s'", conn.LocalAddr().String())
+	address := conn.RemoteAddr().String()
+	s.logger.Printf("[INFO] swarm: creating peer stub for '%s'", address)
+	var joins []sentry.SignedMessage
+
+	// _, ok := s.peers[address]
+	// if ok {
+	// 	err := stacktrace.NewError("peer address '%s' already exists", address)
+	// 	return err
+	// }
+	for _, join := range s.joinsByAddr {
+		joins = append(joins, join)
+	}
+	hello, err := s.coreConf.Sentry().NewMessage(core.HelloPayload{
+		YourAddr: conn.RemoteAddr().String(),
+	})
+	if err != nil {
+		err = stacktrace.Propagate(err, "swarm could not get a new signed hello message on joining address '%s'", address)
+	}
 	peer := &Peer{
 		codec: codec.NewJSONCodec(conn, conn),
 	}
-	s.peers[counter] = peer
+	s.peers[address] = peer
+	// msg, err := s.coreConf.AgentHelloEvent(conn.LocalAddr().String())
+	// if err != nil {
+	// 	err = stacktrace.Propagate(err, "swarm could not get a hello message for address '%s'", conn.LocalAddr().String())
+	// }
+	err = peer.codec.Encode(hello)
+	if err != nil {
+		err = stacktrace.Propagate(err, "swarm could not encode hello message and send it on the wire")
+		return err
+	}
+	for _, join := range joins {
+		err = peer.codec.Encode(join)
+		if err != nil {
+			err = stacktrace.Propagate(err, "swarm could not encode join message and send it on the wire : %v", join)
+			return err
+		}
+	}
+	return nil
+}
+func (s *Swarm) addPeer(address string, peer *Peer) error {
+
 	return nil
 }
 

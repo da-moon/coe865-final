@@ -137,7 +137,7 @@ func (a *Agent) listen() {
 			continue
 		}
 		a.logger.Printf("[INFO] node '%v' : recieved an incomming connection from peer with address %v", a.ID(), conn.LocalAddr().String())
-		err = a.swarm.AddPeer(conn)
+		err = a.swarm.Handshake(conn)
 		if err != nil {
 			// a.warningCh <- err.Error()
 			// closing connection
@@ -159,7 +159,7 @@ func (a *Agent) connect(addrs []string) {
 		}
 		a.logger.Printf("[INFO] node '%v' : established an outgoing connection to peer with address %v", a.ID(), conn.LocalAddr().String())
 		// peer := NewPeer(conn)
-		// if err := peerManager.AddPeer(peer); err != nil {
+		// if err := peerManager.Handshake(peer); err != nil {
 		// 	log.Fatalf("Error adding initial peer %s: %s", peer, err)
 		// }
 	}

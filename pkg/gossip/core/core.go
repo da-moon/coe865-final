@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	lamportclock "github.com/da-moon/coe865-final/pkg/gossip/lamport-clock"
+	"github.com/da-moon/coe865-final/pkg/gossip/sentry"
+	"github.com/palantir/stacktrace"
 )
 
 const (
@@ -27,6 +29,7 @@ type Config struct {
 	NodeName        string
 	ExternalEventCh chan Event
 	InrernalEventCh chan Event
+	sentry          *sentry.Sentry
 }
 
 // Init ...
@@ -41,6 +44,15 @@ func (c *Config) Init() {
 		if c.InrernalEventCh == nil {
 			c.InrernalEventCh = make(chan Event, DefaultEventChannelSize)
 		}
+		if c.sentry == nil {
+			k, err := sentry.Default()
+			if err != nil {
+				err = stacktrace.Propagate(err, "could not create a new gossip agent core due to an issue with generating RSA key for the node")
+				panic(err)
+
+			}
+			c.sentry = k
+		}
 		logOutput := c.LogOutput
 		if logOutput == nil {
 			logOutput = os.Stderr
@@ -52,6 +64,11 @@ func (c *Config) Init() {
 	})
 }
 
+// Sentry ...
+func (c *Config) Sentry() *sentry.Sentry {
+	return c.sentry
+}
+
 // DefaultConfig ...
 func DefaultConfig() *Config {
 
@@ -59,12 +76,19 @@ func DefaultConfig() *Config {
 	if err != nil {
 		panic(err)
 	}
+	k, err := sentry.Default()
+	if err != nil {
+		err = stacktrace.Propagate(err, "could not create a new gossip agent core due to an issue with generating RSA key for the node")
+		panic(err)
+	}
+
 	return &Config{
 		LogOutput:       os.Stderr,
 		NodeName:        hostname,
 		ShutdownCh:      make(chan struct{}),
-		ExternalEventCh: make(chan Event, 1024),
-		InrernalEventCh: make(chan Event, 1024),
+		ExternalEventCh: make(chan Event, DefaultEventChannelSize),
+		InrernalEventCh: make(chan Event, DefaultEventChannelSize),
+		sentry:          k,
 	}
 }
 
@@ -93,22 +117,4 @@ func (s State) String() string {
 	default:
 		return "core-unknown"
 	}
-}
-
-// AgentHelloEvent ...
-func (c *Config) AgentHelloEvent(name string, payload []byte) {
-	// // fmt.Println("[INFO] AgentHelloEvent()")
-
-	c.Logger.Printf("[DEBUG] core: Requesting agent hello send: %s. Payload: %#v",
-		name, string(payload))
-	if c.ExternalEventCh != nil {
-		// // fmt.Println("[INFO] AgentHelloEvent() sending")
-
-		c.ExternalEventCh <- HelloEvent{
-			LTime:   c.eventClock.Time(),
-			Name:    name,
-			Payload: payload,
-		}
-	}
-	return
 }

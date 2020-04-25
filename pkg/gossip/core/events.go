@@ -39,31 +39,15 @@ func (e EventType) String() string {
 	}
 }
 
-// HelloEvent ...
-type HelloEvent struct {
+// GossipEvent ...
+type GossipEvent struct {
 	LTime   lamportclock.LamportTime
 	Name    string
 	Payload []byte
-}
-
-// EventType ...
-func (u HelloEvent) EventType() EventType {
-
-	return EventHello
-}
-
-// String ...
-func (u HelloEvent) String() string {
-
-	return fmt.Sprintf("hello: %s", u.Name)
 }
 
 // UpdateEvent ...
-type UpdateEvent struct {
-	LTime   lamportclock.LamportTime
-	Name    string
-	Payload []byte
-}
+type UpdateEvent GossipEvent
 
 // EventType ...
 func (u UpdateEvent) EventType() EventType {
@@ -78,11 +62,7 @@ func (u UpdateEvent) String() string {
 }
 
 // LeaveEvent ...
-type LeaveEvent struct {
-	LTime   lamportclock.LamportTime
-	Name    string
-	Payload []byte
-}
+type LeaveEvent GossipEvent
 
 // EventType ...
 func (u LeaveEvent) EventType() EventType {

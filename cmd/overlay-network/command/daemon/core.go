@@ -11,7 +11,6 @@ import (
 	model "github.com/da-moon/coe865-final/model"
 	config "github.com/da-moon/coe865-final/pkg/config"
 	"github.com/da-moon/coe865-final/pkg/gossip/core"
-	"github.com/da-moon/coe865-final/pkg/gossip/sentry"
 	"github.com/da-moon/coe865-final/pkg/gossip/swarm"
 	utils "github.com/da-moon/coe865-final/pkg/utils"
 	prettyjson "github.com/hokaccha/go-prettyjson"
@@ -30,7 +29,6 @@ type Core struct {
 	// used for handling events as they are broadcasted
 	coreConf          *core.Config
 	conf              *config.Config
-	sentry            *sentry.Sentry
 	listener          net.Listener
 	swarm             *swarm.Swarm
 	eventCh           chan core.Event
@@ -54,11 +52,7 @@ func Create(conf *config.Config, coreConf *core.Config, logOutput io.Writer) (*C
 	eventCh := make(chan core.Event, core.DefaultEventChannelSize)
 	coreConf.ExternalEventCh = eventCh
 	coreConf.Init()
-	k, err := sentry.Default()
-	if err != nil {
-		err = stacktrace.Propagate(err, "could not create a new gossip agent due to an issue with generating RSA key for the node")
-		return nil, err
-	}
+
 	listener, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", conf.Port))
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not bind to port '%d'", conf.Port)
@@ -75,9 +69,9 @@ func Create(conf *config.Config, coreConf *core.Config, logOutput io.Writer) (*C
 		eventHandlers: make(map[EventHandler]struct{}),
 		logger:        logger,
 		shutdownCh:    make(chan struct{}),
-		sentry:        k,
-		listener:      listener,
-		swarm:         swarm.New(swarmConf, coreConf),
+
+		listener: listener,
+		swarm:    swarm.New(swarmConf, coreConf),
 		cron: cron.New(
 			cron.WithLogger(cron.PrintfLogger(logger)),
 		),
@@ -104,11 +98,12 @@ func (a *Core) Start() error {
 
 	go a.eventHandlerLoop()
 	go a.listen()
-	// TODO fix this [CRITICAL]
-	if a.conf.DevelopmentMode == true && len(a.conf.ConnectedRouteControllers) > 0 {
+	// TODO fix dev flag [CRITICAL]
+	if len(a.conf.ConnectedRouteControllers) > 0 {
 		a.logger.Printf("[INFO] '%s' : connecting to bootstrap nodes ", a.listener.Addr().String())
 		go a.bootstrap()
 	}
+	a.swarm.Start()
 	return nil
 }
 
@@ -136,7 +131,7 @@ func (a *Core) listen() {
 					continue
 				}
 				a.logger.Printf("[INFO] node '%v' : recieved an incomming connection from peer with address %v", a.ID(), conn.LocalAddr().String())
-				err = a.swarm.AddPeer(conn)
+				err = a.swarm.Handshake(conn)
 				if err != nil {
 					a.logger.Printf("[WARN] %v", err)
 					// closing connection
@@ -155,27 +150,24 @@ func (a *Core) listen() {
 // to the same port agent is listening (as it is set in it's config)
 func (a *Core) bootstrap() {
 	a.logger.Printf("[INFO] agent '%v' : connecting to bootstrap nodes ...", a.ID())
-	addrs := make([]string, 0)
-	for _, v := range a.conf.ConnectedRouteControllers {
-		addr := fmt.Sprintf("%s:%d", v.IP, a.conf.Port)
-		addrs = append(addrs, addr)
-	}
-	for _, addr := range addrs {
+	for _, rc := range a.conf.ConnectedRouteControllers {
+		addr := rc.IP
 		conn, err := net.Dial("tcp", addr)
 		if err != nil {
 			a.logger.Printf("[WARN] could not connect to '%s' : %v", addr, err)
 			continue
 		}
 		a.logger.Printf("[INFO] node '%v' : established an outgoing connection to peer with address %v", a.ID(), conn.LocalAddr().String())
-		// peer := NewPeer(conn)
-		// if err := peerManager.AddPeer(peer); err != nil {
-		// 	log.Fatalf("Error adding initial peer %s: %s", peer, err)
-		// }
+		err = a.swarm.Handshake(conn)
+		if err != nil {
+			a.logger.Printf("[WARN] %v", err)
+			// closing connection
+			conn.Close()
+			continue
+		}
 	}
 }
 func (a *Core) eventHandlerLoop() {
-	// // fmt.Println("[INFO] Core.eventHandlerLoop()")
-
 	a.logger.Printf("[INFO] agent: started event listener")
 	for {
 		select {
@@ -215,7 +207,7 @@ func (a *Core) DeregisterEventHandler(eh EventHandler) {
 // encoded public key to be used as agent ID
 func (a *Core) ID() string {
 
-	result, err := a.sentry.PublicKeyBase64()
+	result, err := a.coreConf.Sentry().PublicKeyBase64()
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not get node ID")
 		panic(err)
