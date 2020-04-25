@@ -1,6 +1,4 @@
-package swarm
-
-import "fmt"
+package daemon
 
 type sequencer uint
 type sequenceTracker struct {
@@ -10,7 +8,7 @@ type sequenceTracker struct {
 
 // See ...
 func (t *sequenceTracker) See(s sequencer) bool {
-	fmt.Println("[CALL-STACK] [file] /workspace/coe865-final/internal/overlay/sequence.go [method] (t *sequenceTracker) See(s sequencer) bool ")
+
 	if s < t.horizon || t.seen[s] {
 		return false
 	}

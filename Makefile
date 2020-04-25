@@ -39,15 +39,15 @@ run: kill
 
 run-3: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_THREE} > $(PWD)/logs/node-3.log 2>&1 &
+	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json  > $(PWD)/logs/node-3.log 2>&1 &
 	- $(call print_completed_target)
 run-2: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_TWO} > $(PWD)/logs/node-2.log 2>&1 &
+	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc2.json  > $(PWD)/logs/node-2.log 2>&1 &
 	- $(call print_completed_target)
 run-1: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc1.json --rpc-port=${PORT_ONE} > $(PWD)/logs/node-1.log 2>&1 &
+	- $(MKDIR) logs && bin$(PSEP)overlay-network daemon -config-file=$(PWD)/fixtures/rc3.json  > $(PWD)/logs/node-1.log 2>&1 &
 	- $(call print_completed_target)
 config: 
 	- $(call print_running_target)

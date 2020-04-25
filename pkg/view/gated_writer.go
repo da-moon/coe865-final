@@ -15,7 +15,6 @@ type GatedWriter struct {
 
 // Flush ...
 func (w *GatedWriter) Flush() {
-
 	w.lock.Lock()
 	w.flush = true
 	w.lock.Unlock()

@@ -4,7 +4,6 @@ import (
 	"github.com/da-moon/coe865-final/pkg/config"
 	"github.com/palantir/stacktrace"
 
-	// "crypto/rand"
 	"flag"
 	"fmt"
 
@@ -16,7 +15,6 @@ func (c *Command) readConfig() *config.Config {
 	const entrypoint = "daemon"
 	cmdFlags := flag.NewFlagSet(entrypoint, flag.ContinueOnError)
 	cmdConfigFactory := config.DefaultConfigFactory()
-	cmdConfigFactory.Init()
 	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
 	configFile := flags.ConfigFilePathFlag(cmdFlags)
 	dev := flags.DevFlag(cmdFlags)
@@ -37,21 +35,19 @@ func (c *Command) readConfig() *config.Config {
 	cmdConfigFactory.LogLevel = *logLevel
 	cmdConfigFactory.Port = *port
 	cmdConfigFactory.Cron = *cron
-	// factory := config.DefaultConfigFactory()
-	// factory = config.MergeFactory(factory, cmdConfigFactory)
-	factory := cmdConfigFactory
+	factory := config.DefaultConfigFactory()
+	factory = config.MergeFactory(factory, cmdConfigFactory)
+	// fmt.Println("factory", factory)
 	mapping, err := factory.ReadConfigPaths([]string{*configFile}, config.JSON)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("[ERROR]: %s", err.Error()))
 		return nil
 	}
-	// fmt.Println("factory", "config", factory.DevelopmentMode)
 	result, ok := mapping[*configFile]
 	if !ok {
 		err := stacktrace.NewError("could not extract config file from map with key '%s'", *configFile)
 		c.Ui.Error(fmt.Sprintf("[ERROR]: %s", err.Error()))
 		return nil
 	}
-	// // // fmt.Println("readConfig()  result", result)
 	return &result
 }
