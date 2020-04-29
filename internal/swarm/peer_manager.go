@@ -16,7 +16,7 @@ type PeerManagerConfig struct {
 }
 
 // NewPeerManager ...
-func NewPeerManager(gossiper Gossiper, config PeerManagerConfig) PeerManager {
+func NewPeerManager(gossiper Gossiper, config PeerManagerConfig, logger *log.Logger) PeerManager {
 
 	pm := &peerManager{
 		gossiper:     gossiper,
@@ -28,6 +28,7 @@ func NewPeerManager(gossiper Gossiper, config PeerManagerConfig) PeerManager {
 		currentPeers: make(map[PeerHandle]Peer),
 		notifyChan:   make(chan bool, 1),
 		closed:       make(chan bool, 1),
+		logger:       logger,
 	}
 	if pm.retryDelay == 0 {
 		pm.retryDelay = DefaultRetryDelay
@@ -50,6 +51,7 @@ type peerManager struct {
 	notifyChan          chan bool
 	closing             bool
 	closed              chan bool
+	logger              *log.Logger
 }
 
 // AddPeer ...
@@ -120,13 +122,13 @@ func (pm *peerManager) findPeerToAdd(currentPeers map[PeerHandle]Peer) {
 	peer, err := pm.newPeer(currentPeers)
 	if err != nil {
 		if err != ErrNoPeers {
-			log.Printf("Error finding a new peer to add. Retrying in %s. err: %s", pm.retryDelay, err)
+			pm.logger.Printf("[WARN] Error finding a new peer to add. Retrying in %s. err: %s", pm.retryDelay, err)
 		}
 		pm.notifyAfter(pm.retryDelay)
 		return
 	}
 	if err := pm.AddPeer(peer); err != nil {
-		log.Printf("Error adding new peer %s. Retrying in %s. err: %s", peer, pm.retryDelay, err)
+		pm.logger.Printf("[WARN] Error adding new peer %s. Retrying in %s. err: %s", peer, pm.retryDelay, err)
 		pm.notifyAfter(pm.retryDelay)
 		return
 	}
@@ -146,7 +148,7 @@ func (pm *peerManager) findPeerToRemove(currentPeers map[PeerHandle]Peer) {
 		}
 	}
 	if ok {
-		log.Printf("Too many connected peers; removing %s.", victim)
+		pm.logger.Printf("[WARN] Too many connected peers; removing %s.", victim)
 		pm.gossiper.RemovePeer(victimHandle)
 	}
 }

@@ -6,20 +6,25 @@
     "cost_estimator_path": "",
     "log_level": "INFO",
     "self": {
-        "id": 1,
-        "autonomous_system_number": 100,
+        "id": 2,
+        "autonomous_system_number": 200,
         "ip": "10.1.1.2"
     },
     "connected_route_controllers": [
         {
-            "id": 2,
-            "autonomous_system_number": 200,
+            "id": 1,
+            "autonomous_system_number": 100,
             "ip": "127.0.0.1:8080"
         },
         {
             "id": 3,
             "autonomous_system_number": 300,
             "ip": "127.0.0.1:8082"
+        },
+        {
+            "id": 4,
+            "autonomous_system_number": 400,
+            "ip": "127.0.0.1:8083"
         }
     ],
     "connected_autonomous_systems": [
@@ -29,17 +34,22 @@
             "cost": 5
         },
         {
-            "number": 20,
+            "number": 40,
             "link_capacity": 5,
-            "cost": 5
+            "cost": 10
         },
         {
-            "number": 200,
+            "number": 100,
             "link_capacity": 10,
             "cost": 5
         },
         {
             "number": 300,
+            "link_capacity": 10,
+            "cost": 5
+        },
+        {
+            "number": 400,
             "link_capacity": 10,
             "cost": 5
         }

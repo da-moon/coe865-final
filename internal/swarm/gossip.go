@@ -15,9 +15,11 @@ type outgoingMessage struct {
 	excludePeers map[PeerHandle]bool
 }
 type gossiper struct {
-	incomingMessages      chan incomingMessage
-	outgoingMessages      chan outgoingMessage
-	mu                    sync.Mutex
+	incomingMessages chan incomingMessage
+	outgoingMessages chan outgoingMessage
+	mu               sync.Mutex
+	logger           *log.Logger
+
 	nextPeerWatcherHandle PeerWatcherHandle
 	peerWatchers          map[PeerWatcherHandle]PeerWatcher
 	nextPeerHandle        PeerHandle
@@ -28,7 +30,7 @@ type gossiper struct {
 }
 
 // NewGossiper ...
-func NewGossiper(updateFunc func(interface{}) bool) Gossiper {
+func NewGossiper(updateFunc func(interface{}) bool, logger *log.Logger) Gossiper {
 
 	g := &gossiper{
 		incomingMessages:      make(chan incomingMessage, 1000),
@@ -39,6 +41,7 @@ func NewGossiper(updateFunc func(interface{}) bool) Gossiper {
 		peers:                 make(map[PeerHandle]Peer),
 		peerClosedChans:       make(map[PeerHandle]chan<- bool),
 		closed:                make(chan bool),
+		logger:                logger,
 	}
 	go g.pumpIncoming(updateFunc)
 	go g.pumpOutgoing()
@@ -79,7 +82,7 @@ func (g *gossiper) pumpOutgoing() {
 			err := peer.Write(outgoingMessage.message)
 			if err != nil {
 				if err != io.EOF {
-					log.Printf("error writing message to peer %s: %s", peer, err)
+					g.logger.Printf("[WARN] Error writing message to peer %s: %s", peer, err)
 				}
 				g.RemovePeer(handle)
 			}
@@ -115,7 +118,7 @@ func (g *gossiper) pumpPeerIncoming(handle PeerHandle, peer Peer) {
 		message, err := peer.Read()
 		if err != nil {
 			if err != io.EOF {
-				log.Printf("error reading from peer %s; disconnecting: %s", peer, err)
+				g.logger.Printf("[WARN] Error reading from peer %s; disconnecting: %s", peer, err)
 			}
 			break
 		}
@@ -134,7 +137,7 @@ func (g *gossiper) RemovePeer(handle PeerHandle) {
 	defer g.mu.Unlock()
 	if peer, ok := g.peers[handle]; ok {
 		if err := peer.Close(); err != nil {
-			log.Printf("error closing peer %s: %s", peer, err)
+			g.logger.Printf("[WARN] Error closing peer %s: %s", peer, err)
 		}
 		delete(g.peers, handle)
 		for _, peerWatcher := range g.peerWatchers {
@@ -188,7 +191,7 @@ func (g *gossiper) Close() {
 	for handle, peer := range g.peers {
 		g.peerClosedChans[handle] = c
 		if err := peer.Close(); err != nil {
-			log.Printf("error closing peer %s: %s", peer, err)
+			g.logger.Printf("[WARN] Error closing peer %s: %s", peer, err)
 		}
 	}
 	g.mu.Unlock()

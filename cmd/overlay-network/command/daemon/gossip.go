@@ -3,14 +3,13 @@ package daemon
 import (
 	"encoding/base64"
 	"errors"
-	"log"
 	"math/rand"
 	"net"
+	"strconv"
 
 	"github.com/da-moon/coe865-final/internal/swarm"
 	model "github.com/da-moon/coe865-final/model"
 	"github.com/da-moon/coe865-final/pkg/jsonutil"
-	prettyjson "github.com/hokaccha/go-prettyjson"
 	"github.com/palantir/stacktrace"
 )
 
@@ -30,16 +29,16 @@ func (a *Core) handleGossip(value interface{}) bool {
 
 	msg, ok := value.(Message)
 	if !ok {
-		log.Printf("Discarding unexpected gossip value: %#v", value)
+		a.logger.Printf("[WARN] Discarding unexpected gossip value: %#v", value)
 		return false
 	}
 	if err := msg.Verify(); err != nil {
-		log.Printf("Discarding message with invalid signature. err: %s; msg: %v", err, msg)
+		a.logger.Printf("[WARN] Discarding message with invalid signature. err: %s; msg: %v", err, msg)
 		return false
 	}
 	payload, err := msg.Payload()
 	if err != nil {
-		log.Printf("Discarding message with invalid payload: %s", err)
+		a.logger.Printf("[WARN] Discarding message with invalid payload: %s", err)
 	}
 	id := msg.Origin
 	fp := id.Fingerprint()
@@ -57,9 +56,9 @@ func (a *Core) handleGossip(value interface{}) bool {
 	case JoinPayload:
 		return a.handleJoin(record, payload, msg)
 	case AgentPayload:
-		return a.handleAgent(record, payload, msg)
+		return a.handleUpdate(record, payload, msg)
 	default:
-		log.Printf("Discarding message with unknown payload: %#v", payload)
+		a.logger.Printf("[WARN] Discarding message with unknown payload: %#v", payload)
 		return false
 	}
 }
@@ -67,7 +66,7 @@ func (a *Core) handleHello(record *identityRecord, payload HelloPayload, msg Mes
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", payload.YourAddr)
 	if err != nil {
-		log.Printf("Received hello with invalid TCP address: %s", payload.YourAddr)
+		a.logger.Printf("[INFO] Received hello with invalid TCP address: %s", payload.YourAddr)
 		return false
 	}
 	tcpAddr.Port = a.conf.Port
@@ -85,7 +84,7 @@ func (a *Core) handleJoin(record *identityRecord, payload JoinPayload, msg Messa
 	}
 	return !ok
 }
-func (a *Core) handleAgent(record *identityRecord, payload AgentPayload, msg Message) bool {
+func (a *Core) handleUpdate(record *identityRecord, payload AgentPayload, msg Message) bool {
 
 	isNew := record.AgentSequenceTracker.See(payload.Sequence)
 	if isNew {
@@ -95,15 +94,42 @@ func (a *Core) handleAgent(record *identityRecord, payload AgentPayload, msg Mes
 			a.logger.Printf("[WARN] %v", err)
 			return false
 		}
-		var update model.UpdateRequest
+		var update model.UpdateMessage
 		err = jsonutil.DecodeJSON(decByte, &update)
 		if err != nil {
 			err := stacktrace.Propagate(err, "agent %s could not decode recieved message from json", record.Identity.Fingerprint())
 			a.logger.Printf("[WARN] %v", err)
 			return false
 		}
-		prettyreq, _ := prettyjson.Marshal(update)
-		a.logger.Printf("[INFO] Agent %s : Message %s", record.Identity.Fingerprint(), string(prettyreq))
+		reqid := update.UUID
+
+		updateSource := &vertex{id: strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))}
+		for _, v := range update.DestinationAutonomousSystem {
+
+			_, ok := a.vertices[strconv.Itoa(int(v.Number))]
+			if !ok {
+				vert := &vertex{id: strconv.Itoa(int(v.Number))}
+				cost := v.Cost * v.LinkCapacity
+				link(updateSource, vert, int(cost))
+				a.vertices[strconv.Itoa(int(v.Number))] = vert
+			}
+		}
+		a.vertices[strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))] = updateSource
+		self := &vertex{id: strconv.Itoa(a.conf.Self.AutonomousSystemNumber)}
+
+		for _, v := range a.vertices {
+			dpath, err := ShortestPath(self, v)
+			if err != nil {
+				a.logger.Printf("[WARN] shortest path returned following error %v", err)
+			}
+			vertexPath := make([]*vertex, len(dpath))
+			path := make([]string, 0)
+			for i := range dpath {
+				vertexPath[i] = dpath[i].(*vertex)
+				path = append(path, vertexPath[i].id)
+			}
+			a.logger.Printf("[INFO] Agent %s - [%s] DEST_ASN=%v PATH={%v} BW COST", record.Identity.Fingerprint(), reqid, v.id, path)
+		}
 	}
 	return isNew
 }

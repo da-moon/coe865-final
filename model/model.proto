@@ -1,10 +1,7 @@
 syntax = "proto3";
 package model;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-message Hash {
-  string md5 = 1;
-  string sha256 = 2;
-}
+
 message RouteController {
   int32 id = 1 [ (gogoproto.customname) = "ID" ];
   int32 autonomous_system_number = 2;
@@ -15,30 +12,8 @@ message AutonomousSystem {
   int32 link_capacity = 2;
   int32 cost = 3;
 }
-message UpdateRequest {
+message UpdateMessage {
   string uuid = 1 [ (gogoproto.customname) = "UUID" ];
   RouteController source_route_controller = 2;
-  AutonomousSystem destination_autonomous_system = 3;
-  //   Hash message_digest = 4;
-}
-message UpdateResponse {
-  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
-  AutonomousSystem destination_autonomous_system = 2;
-  repeated int32 path = 3;
-  //   Hash message_digest = 4;
-}
-message KeyExchangeRequest {
-  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
-  string nonce = 2;
-  string key = 3;
-  //   Hash message_digest = 4;
-}
-message KeyExchangeResponse {
-  string uuid = 1 [ (gogoproto.customname) = "UUID" ];
-  bool is_ok = 2;
-  //   Hash message_digest = 3;
-}
-service OverlayNetwork {
-  rpc EstimateCost(UpdateRequest) returns (UpdateResponse) {}
-  rpc KeyExchange(KeyExchangeRequest) returns (KeyExchangeResponse) {}
+  repeated AutonomousSystem destination_autonomous_system = 3;
 }

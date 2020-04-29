@@ -57,11 +57,11 @@ func (c *Config) SaveAsJSON(path string) error {
 	// checking to see if target exists
 	// delete if stat was successful (i.e exists ...)
 	if err == nil {
-		err = os.Remove(path)
-		if err != nil {
-			stacktrace.Propagate(err, "could not remove old json config at %s", path)
-			return err
-		}
+		os.Remove(path)
+		// if err != nil {
+		// 	stacktrace.Propagate(err, "could not remove old json config at %s", path)
+		// 	return err
+		// }
 	}
 	sink, err := os.Create(path)
 	if err != nil {

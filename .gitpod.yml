@@ -1,5 +1,5 @@
 image:
-  file: .gitpod.Dockerfile
+  file: contrib/gitpod/.gitpod.Dockerfile
 tasks:
   - init: >
       GO111MODULE=off go get -u -v github.com/cuonglm/gocmt &&

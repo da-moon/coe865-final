@@ -47,7 +47,7 @@ func CronFlag(f *flag.FlagSet) *string {
 	// cron job that sets
 	// how often messages are
 	// broadcastes
-	result := "@every 10s"
+	result := "@every 3s"
 	return f.String("cron", result,
 		"controls how often messages are broadcasted.")
 }

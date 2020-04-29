@@ -9,15 +9,15 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/da-moon/coe865-final/internal/swarm"
 	model "github.com/da-moon/coe865-final/model"
 	config "github.com/da-moon/coe865-final/pkg/config"
-	"github.com/shoprunback/go-raph/raph"
+	"github.com/da-moon/coe865-final/pkg/jsonutil"
 
 	utils "github.com/da-moon/coe865-final/pkg/utils"
-	prettyjson "github.com/hokaccha/go-prettyjson"
 	stacktrace "github.com/palantir/stacktrace"
 	cron "github.com/robfig/cron/v3"
 )
@@ -44,7 +44,7 @@ type Core struct {
 	agentSequence sequencer
 	peerManager   swarm.PeerManager
 	listener      net.Listener
-	graph         *raph.Graph
+	vertices      map[string]*vertex
 }
 
 // Create ...
@@ -76,14 +76,16 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 		cron: cron.New(
 			cron.WithLogger(cron.PrintfLogger(logger)),
 		),
-		graph: raph.NewGraph(),
+		vertices: make(map[string]*vertex),
 	}
-	result.gossiper = swarm.NewGossiper(result.handleGossip)
-	result.peerManager = swarm.NewPeerManager(result.gossiper, swarm.PeerManagerConfig{
+
+	result.gossiper = swarm.NewGossiper(result.handleGossip, result.logger)
+	pmConf := swarm.PeerManagerConfig{
 		NewPeer:   result.findPeer,
 		OnConnect: result.onConnect,
 		MinPeers:  1,
-	})
+	}
+	result.peerManager = swarm.NewPeerManager(result.gossiper, pmConf, result.logger)
 	return result, nil
 }
 
@@ -95,7 +97,21 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 // scheduler.
 func (a *Core) Start() error {
 	a.logger.Printf("[INFO] overlay network daemon core started!")
-	entryID, err := a.cron.AddFunc(a.conf.Cron, a.EstimateCost())
+	a.logger.Printf("[INFO] creating graph based on config !")
+
+	self := &vertex{id: strconv.Itoa(a.conf.Self.AutonomousSystemNumber)}
+	for _, v := range a.conf.ConnectedAutonomousSystems {
+		_, ok := a.vertices[strconv.Itoa(v.Number)]
+		if !ok {
+			vert := &vertex{id: strconv.Itoa(v.Number)}
+			// calculating cost
+			cost := v.Cost * v.LinkCapacity
+			link(self, vert, cost)
+			a.vertices[strconv.Itoa(v.Number)] = vert
+		}
+	}
+	a.vertices[strconv.Itoa(a.conf.Self.AutonomousSystemNumber)] = self
+	entryID, err := a.cron.AddFunc(a.conf.Cron, a.SendUpdateMessage())
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not start cron job handler")
 		a.logger.Printf(fmt.Sprintf(("[WARN] error : %#v"), err.Error()))
@@ -109,7 +125,6 @@ func (a *Core) Start() error {
 		a.logger.Printf("[INFO] '%s' : connecting to bootstrap nodes ", a.listener.Addr().String())
 		a.bootstrap()
 	}
-	// a.readLines()
 	return nil
 }
 
@@ -137,10 +152,10 @@ func (a *Core) listen() {
 					a.logger.Printf("[WARN] listener failed to accept new connection : %v", err)
 					continue
 				}
-				a.logger.Printf("[INFO] node '%v' : recieved an incomming connection from peer with address %v", conn.LocalAddr().String())
+				a.logger.Printf("[INFO] agent : recieved an incomming connection from peer with address %v", conn.LocalAddr().String())
 				peer := NewPeer(conn)
 				if err := peerManager.AddPeer(peer); err != nil {
-					log.Printf("Error adding new peer %s: %s", peer, err)
+					a.logger.Printf("[WARN] Error adding new peer %s: %s", peer, err)
 				}
 			}
 		}
@@ -162,10 +177,10 @@ func (a *Core) bootstrap() {
 			a.logger.Printf("[WARN] could not connect to '%s' : %v", addr, err)
 			continue
 		}
-		a.logger.Printf("[INFO] node '%v' : established an outgoing connection to peer with address %v", conn.LocalAddr().String())
+		a.logger.Printf("[INFO] agent : established an outgoing connection to peer with address %v", conn.RemoteAddr().String())
 		peer := NewPeer(conn)
 		if err := peerManager.AddPeer(peer); err != nil {
-			log.Printf("Error adding new peer %s: %s", peer, err)
+			a.logger.Printf("[WARN] Error adding new peer %s: %s", peer, err)
 		}
 	}
 }
@@ -206,11 +221,11 @@ func (a *Core) ShutdownCh() <-chan struct{} {
 	return a.shutdownCh
 }
 
-// EstimateCost ...
-func (a *Core) EstimateCost() func() {
+// SendUpdateMessage ...
+func (a *Core) SendUpdateMessage() func() {
 
 	return func() {
-		req := &model.UpdateRequest{
+		req := &model.UpdateMessage{
 			UUID: utils.UUID(),
 		}
 		req.SourceRouteController = &model.RouteController{
@@ -218,12 +233,13 @@ func (a *Core) EstimateCost() func() {
 			AutonomousSystemNumber: int32(a.conf.Self.AutonomousSystemNumber),
 			IP:                     a.conf.Self.IP,
 		}
-		req.DestinationAutonomousSystem = &model.AutonomousSystem{
-			Number:       int32(a.conf.ConnectedAutonomousSystems[0].Number),
-			LinkCapacity: int32(a.conf.ConnectedAutonomousSystems[0].LinkCapacity),
-			Cost:         int32(a.conf.ConnectedAutonomousSystems[0].Cost),
+		for _, v := range a.conf.ConnectedAutonomousSystems {
+			req.DestinationAutonomousSystem = append(req.DestinationAutonomousSystem, &model.AutonomousSystem{
+				Number:       int32(v.Number),
+				LinkCapacity: int32(v.LinkCapacity),
+				Cost:         int32(v.Cost),
+			})
 		}
-		prettyreq, _ := prettyjson.Marshal(req)
-		a.Broadcast(base64.StdEncoding.EncodeToString(prettyreq))
+		a.Broadcast(base64.StdEncoding.EncodeToString(jsonutil.EncodeJSONWithoutErr(req)))
 	}
 }

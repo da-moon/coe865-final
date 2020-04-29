@@ -156,7 +156,7 @@ Options:
   -config-file=foo.json         Path to a JSON file to read configuration from.
   -log-level=info               daemon's log level.
   -cost-estimator-path=foo      Path cost estimator plugin is located at.
-  -cron='@every 10s'            message sending interval, in cron format.
+  -cron='@every 3s'            message sending interval, in cron format.
 `
 	return strings.TrimSpace(helpText)
 }
