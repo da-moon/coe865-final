@@ -9,13 +9,14 @@ import (
 
 	"github.com/da-moon/coe865-final/internal/swarm"
 	model "github.com/da-moon/coe865-final/model"
+	"github.com/da-moon/coe865-final/pkg/djikstra"
 	"github.com/da-moon/coe865-final/pkg/jsonutil"
 	"github.com/palantir/stacktrace"
 )
 
 // Broadcast ...
 func (a *Core) Broadcast(text string) {
-
+	a.logger.Printf("[INFO] agent with address '%v' is brodcasting gossip", a.listener.Addr())
 	a.mu.Lock()
 	seq := a.agentSequence
 	a.agentSequence++
@@ -36,6 +37,8 @@ func (a *Core) handleGossip(value interface{}) bool {
 		a.logger.Printf("[WARN] Discarding message with invalid signature. err: %s; msg: %v", err, msg)
 		return false
 	}
+
+	a.logger.Printf("[INFO] A Rumour was intercepted from %v", msg.Origin.Fingerprint())
 	payload, err := msg.Payload()
 	if err != nil {
 		a.logger.Printf("[WARN] Discarding message with invalid payload: %s", err)
@@ -101,35 +104,61 @@ func (a *Core) handleUpdate(record *identityRecord, payload AgentPayload, msg Me
 			a.logger.Printf("[WARN] %v", err)
 			return false
 		}
-		reqid := update.UUID
-
-		updateSource := &vertex{id: strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))}
+		a.logger.Printf("[INFO] An Overlay Update was intercepted from %v", msg.Origin.Fingerprint())
+		nodes := make([]string, 0)
+		// append self
+		self := strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))
+		nodes = append(nodes, self)
+		// append remote nodes
 		for _, v := range update.DestinationAutonomousSystem {
-
-			_, ok := a.vertices[strconv.Itoa(int(v.Number))]
-			if !ok {
-				vert := &vertex{id: strconv.Itoa(int(v.Number))}
-				cost := v.Cost * v.LinkCapacity
-				link(updateSource, vert, int(cost))
-				a.vertices[strconv.Itoa(int(v.Number))] = vert
-			}
+			nodes = append(nodes, strconv.Itoa(int(v.Number)))
 		}
-		a.vertices[strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))] = updateSource
-		self := &vertex{id: strconv.Itoa(a.conf.Self.AutonomousSystemNumber)}
-
-		for _, v := range a.vertices {
-			dpath, err := ShortestPath(self, v)
+		// create graph
+		g := djikstra.NewGraph(a.logger)
+		for _, v := range update.DestinationAutonomousSystem {
+			cost := v.Cost * v.LinkCapacity
+			err = g.Link(self, strconv.Itoa(int(v.Number)), int(cost))
 			if err != nil {
-				a.logger.Printf("[WARN] shortest path returned following error %v", err)
+				a.logger.Printf("[DEBUG] %v", err)
+				return false
 			}
-			vertexPath := make([]*vertex, len(dpath))
-			path := make([]string, 0)
-			for i := range dpath {
-				vertexPath[i] = dpath[i].(*vertex)
-				path = append(path, vertexPath[i].id)
-			}
-			a.logger.Printf("[INFO] Agent %s - [%s] DEST_ASN=%v PATH={%v} BW COST", record.Identity.Fingerprint(), reqid, v.id, path)
 		}
+		// now , calculating shortest path between agent and all dst_asn
+		for _, v := range update.DestinationAutonomousSystem {
+			shortestPath, err := g.ShortestPath(self, strconv.Itoa(int(v.Number)))
+			if err != nil {
+				a.logger.Printf("[WARB] %v", err)
+				continue
+			}
+			a.logger.Printf("[INFO] Agent %s - DEST_ASN=%v PATH={%v} BW COST", record.Identity.Fingerprint(), v.Number, shortestPath.String())
+		}
+		// 	updateSource := &vertex{id: strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))}
+		// for _, v := range update.DestinationAutonomousSystem {
+
+		// 		_, ok := a.vertices[strconv.Itoa(int(v.Number))]
+		// 		if !ok {
+		// 			vert := &vertex{id: strconv.Itoa(int(v.Number))}
+		// 			cost := v.Cost * v.LinkCapacity
+		// 			link(updateSource, vert, int(cost))
+		// 			a.vertices[strconv.Itoa(int(v.Number))] = vert
+		// 		}
+		// 	}
+		// 	a.vertices[strconv.Itoa(int(update.SourceRouteController.AutonomousSystemNumber))] = updateSource
+		// 	self := &vertex{id: strconv.Itoa(a.conf.Self.AutonomousSystemNumber)}
+
+		// 	for _, v := range a.vertices {
+		// 		dpath, err := ShortestPath(self, v)
+		// 		if err != nil {
+		// 			a.logger.Printf("[WARN] shortest path returned following error %v", err)
+		// 		}
+		// 		vertexPath := make([]*vertex, len(dpath))
+		// 		path := make([]string, 0)
+		// 		for i := range dpath {
+		// 			vertexPath[i] = dpath[i].(*vertex)
+		// 			path = append(path, vertexPath[i].id)
+		// 		}
+		// 		a.logger.Printf("[INFO] Agent %s - [%s] DEST_ASN=%v PATH={%v} BW COST", record.Identity.Fingerprint(), reqid, v.id, path)
+		// }
 	}
 	return isNew
 }

@@ -9,7 +9,7 @@
             {
                 "match": "\\.go$",
                 "isAsync": true,
-                "cmd": "make -j$(nproc) go-format"
+                "cmd": "make  go-format"
             }
         ]
     }

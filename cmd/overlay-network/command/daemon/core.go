@@ -9,7 +9,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"sync"
 
 	"github.com/da-moon/coe865-final/internal/swarm"
@@ -44,7 +43,6 @@ type Core struct {
 	agentSequence sequencer
 	peerManager   swarm.PeerManager
 	listener      net.Listener
-	vertices      map[string]*vertex
 }
 
 // Create ...
@@ -76,7 +74,6 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 		cron: cron.New(
 			cron.WithLogger(cron.PrintfLogger(logger)),
 		),
-		vertices: make(map[string]*vertex),
 	}
 
 	result.gossiper = swarm.NewGossiper(result.handleGossip, result.logger)
@@ -98,19 +95,6 @@ func Create(conf *config.Config, logOutput io.Writer) (*Core, error) {
 func (a *Core) Start() error {
 	a.logger.Printf("[INFO] overlay network daemon core started!")
 	a.logger.Printf("[INFO] creating graph based on config !")
-
-	self := &vertex{id: strconv.Itoa(a.conf.Self.AutonomousSystemNumber)}
-	for _, v := range a.conf.ConnectedAutonomousSystems {
-		_, ok := a.vertices[strconv.Itoa(v.Number)]
-		if !ok {
-			vert := &vertex{id: strconv.Itoa(v.Number)}
-			// calculating cost
-			cost := v.Cost * v.LinkCapacity
-			link(self, vert, cost)
-			a.vertices[strconv.Itoa(v.Number)] = vert
-		}
-	}
-	a.vertices[strconv.Itoa(a.conf.Self.AutonomousSystemNumber)] = self
 	entryID, err := a.cron.AddFunc(a.conf.Cron, a.SendUpdateMessage())
 	if err != nil {
 		err = stacktrace.Propagate(err, "could not start cron job handler")

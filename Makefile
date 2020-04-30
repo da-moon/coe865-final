@@ -12,6 +12,7 @@ CONFIG_DIR:=$(PWD)$(PSEP)fixtures
 # or 'windows'
 os:=linux
 DELAY=1
+BINARY=bin$(PSEP)overlay-network
 build: 
 	- $(call print_running_target)
 	- @$(MAKE) --no-print-directory -f $(THIS_FILE) go-build
@@ -38,24 +39,24 @@ run: kill
 .SILENT: run-4 run-3 run-2 run-1
 run-4: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)$(os)$(PSEP)overlay-network daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc4.json  > $(PWD)$(PSEP)logs$(PSEP)node-4.log 2>&1 &
+	- $(MKDIR) logs && $(BINARY) daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc4.json  > $(PWD)$(PSEP)logs$(PSEP)node-4.log 2>&1 &
 	- $(call print_completed_target)
 run-3: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)$(os)$(PSEP)overlay-network daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc3.json  > $(PWD)$(PSEP)logs$(PSEP)node-3.log 2>&1 &
+	- $(MKDIR) logs && $(BINARY) daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc3.json  > $(PWD)$(PSEP)logs$(PSEP)node-3.log 2>&1 &
 	- $(call print_completed_target)
 run-2: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)$(os)$(PSEP)overlay-network daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc2.json  > $(PWD)$(PSEP)logs$(PSEP)node-2.log 2>&1 &
+	- $(MKDIR) logs && $(BINARY) daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc2.json  > $(PWD)$(PSEP)logs$(PSEP)node-2.log 2>&1 &
 	- $(call print_completed_target)
 run-1: 
 	- $(call print_running_target)
-	- $(MKDIR) logs && bin$(PSEP)$(os)$(PSEP)overlay-network daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc1.json  > $(PWD)$(PSEP)logs$(PSEP)node-1.log 2>&1 &
+	- $(MKDIR) logs && $(BINARY) daemon -config-file=$(PWD)$(PSEP)fixtures$(PSEP)rc1.json  > $(PWD)$(PSEP)logs$(PSEP)node-1.log 2>&1 &
 	- $(call print_completed_target)
 config: 
 	- $(call print_running_target)
 	- $(info $(CONFIG_DIR))
-	- bin$(PSEP)$(os)$(PSEP)overlay-network parse-config -config-dir=$(CONFIG_DIR)
+	- $(BINARY) parse-config -config-dir=$(CONFIG_DIR)
 	- $(call print_completed_target)
 clean: 
 	- $(call print_running_target)
